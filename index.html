@@ -1,0 +1,4888 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Wiki-Read</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #3b82f6;
+            --accent-soft: #eff6ff;
+            --bg: #f0f4fa;
+            --surface: #ffffff;
+            --surface2: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text2: #64748b;
+            --radius: 18px;
+            --font-scale: 1;
+            --xp-color: #f97316;
+            --coin-color: #fbbf24;
+            --shik-color: #ec4899;
+        }
+        [data-topic="tech"]    { --accent: #3b82f6; --accent-soft: #eff6ff; }
+        [data-topic="nature"]  { --accent: #22c55e; --accent-soft: #f0fdf4; }
+        [data-topic="history"] { --accent: #f59e0b; --accent-soft: #fffbeb; }
+        [data-topic="art"]     { --accent: #ec4899; --accent-soft: #fdf2f8; }
+        [data-topic="science"] { --accent: #8b5cf6; --accent-soft: #f5f3ff; }
+        [data-topic="sport"]   { --accent: #ef4444; --accent-soft: #fef2f2; }
+        [data-topic="geo"]     { --accent: #06b6d4; --accent-soft: #ecfeff; }
+
+        body.dark {
+            --bg: #0a0f1e;
+            --surface: #111827;
+            --surface2: #1f2937;
+            --border: #374151;
+            --text: #f1f5f9;
+            --text2: #94a3b8;
+            --accent-soft: #1e293b;
+        }
+
+        body.dark .btn-ghost {
+            background: #1f2937;
+            color: #f1f5f9;
+            border-color: #374151;
+        }
+
+        body.dark .btn-ghost:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        body.dark .stat-card,
+        body.dark .list-card,
+        body.dark .game-card,
+        body.dark .calculator,
+        body.dark .calc-btn,
+        body.dark .const-btn,
+        body.dark .calc-history,
+        body.dark .calc-display,
+        body.dark .shop-card {
+            background: #1f2937;
+            border-color: #374151;
+            color: #f1f5f9;
+        }
+
+        body.dark .calc-btn.operator {
+            background: #1e293b;
+        }
+
+        body.dark .calc-btn.function {
+            background: #422006;
+        }
+
+        body.dark .calc-btn.equals {
+            background: #1e3a8a;
+        }
+
+        body.dark .calc-btn.clear {
+            background: #3b0a0a;
+        }
+
+        body.dark .rate-btn {
+            background: #1f2937;
+            border-color: #374151;
+            color: #f1f5f9;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.2s, color 0.2s, border-color 0.2s; }
+
+        html, body { max-width: 100%; overflow-x: hidden; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .topbar-row1 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--accent);
+            white-space: nowrap;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .stats-mini {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 30px;
+            padding: 4px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .xp-bar {
+            width: 60px;
+            height: 6px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--xp-color), #facc15);
+            width: 0%;
+        }
+
+        .search-wrap {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .search-wrap input {
+            flex: 1;
+            min-width: 0;
+            padding: 10px 14px;
+            border-radius: 30px;
+            border: 1.5px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            outline: none;
+        }
+        .search-wrap input:focus { border-color: var(--accent); }
+
+        .search-wrap .search-btn {
+            flex-shrink: 0;
+            padding: 10px 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .topbar-row2 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .btn-short { display: none; }
+        .btn-full  { display: inline; }
+
+        @media (max-width: 600px) {
+            .logo { display: none; }
+            .btn-full  { display: none; }
+            .btn-short { display: inline; }
+            .search-wrap .search-btn { padding: 10px 13px; }
+            
+            .topbar-row2 {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                gap: 6px;
+                padding: 4px 0 8px 0;
+                margin: 0;
+                white-space: nowrap;
+                justify-content: flex-start;
+                align-items: center;
+            }
+            
+            .topbar-row2::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .topbar-row2 .btn-ghost {
+                flex: 0 0 auto;
+                padding: 8px 14px;
+                font-size: 16px;
+                margin: 0;
+                border-radius: 30px;
+                background: var(--surface2);
+                border: 1.5px solid var(--border);
+                min-width: 44px;
+                height: 44px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            }
+            
+            .topbar-row2 .btn-ghost:active {
+                background: var(--accent-soft);
+                transform: scale(0.95);
+            }
+            
+            .topbar-row2 .sep {
+                display: none;
+            }
+            
+            .topbar-row2 .font-wrap {
+                flex: 0 0 auto;
+                background: var(--surface2);
+                border: 1.5px solid var(--border);
+                border-radius: 30px;
+                padding: 0 12px;
+                height: 44px;
+                display: inline-flex;
+                align-items: center;
+            }
+            
+            .topbar-row2 .font-wrap input[type="range"] {
+                width: 60px;
+            }
+            
+            .topbar-row2 .lang-select-big {
+                flex: 0 0 auto;
+                width: auto;
+                max-width: none;
+                height: 44px;
+                padding: 0 14px;
+                font-size: 14px;
+            }
+        }
+
+        .btn {
+            padding: 9px 16px;
+            border: none;
+            border-radius: 30px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-ghost { background: var(--surface2); color: var(--text); border: 1.5px solid var(--border); }
+        .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-danger { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
+        .btn-success { background: #22c55e; color: white; border: 1px solid #22c55e; }
+        .btn-warning { background: #f59e0b; color: white; border: 1px solid #f59e0b; }
+
+        .sep { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
+
+        .lang-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 30px;
+            padding: 2px 4px;
+            flex-shrink: 0;
+            max-width: 200px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .lang-group::-webkit-scrollbar { display: none; }
+        .lang-chip {
+            padding: 6px 8px;
+            border-radius: 30px;
+            font-size: 16px;
+            background: transparent;
+            color: var(--text2);
+            cursor: pointer;
+            white-space: nowrap;
+            border: none;
+            transition: 0.1s;
+        }
+        .lang-chip.active {
+            background: var(--accent);
+            color: white;
+        }
+        .lang-chip:hover:not(.active) {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .lang-select-big {
+            padding: 9px 12px;
+            border-radius: 30px;
+            border: 1.5px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            flex-shrink: 0;
+            max-width: 70px;
+        }
+        @media (max-width: 600px) {
+            .lang-group { display: none; }
+            .lang-select-big { display: block; }
+        }
+        @media (min-width: 601px) {
+            .lang-select-big { display: none; }
+            .lang-group { display: flex; }
+        }
+
+        .font-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text2);
+            flex-shrink: 0;
+        }
+        input[type="range"] {
+            width: 70px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .main {
+            flex: 1;
+            padding: 16px;
+            max-width: 980px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .frame {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+            min-height: 400px;
+        }
+
+        @media (max-width: 600px) {
+            .frame { padding: 16px; }
+            .sep { display: none; }
+        }
+
+        .home-hero { text-align: center; padding: 40px 20px 28px; }
+        .home-hero .big-icon { font-size: 60px; margin-bottom: 14px; }
+        .home-hero h2 { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+        .home-hero p { color: var(--text2); margin-bottom: 22px; }
+        .home-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+        .section-label { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; color: var(--text2); margin: 24px 0 10px; }
+        .topic-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .topic-chip {
+            padding: 7px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+            background: var(--surface2); color: var(--text2); font-size: 13px; cursor: pointer; font-weight: 500;
+        }
+        .topic-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+        .results-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; color: var(--text2); margin-bottom: 14px; }
+        .result-card { padding: 14px 16px; border-radius: 12px; cursor: pointer; border-bottom: 1px solid var(--border); }
+        .result-card:hover { background: var(--surface2); }
+        .result-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+        .result-card p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+        .article-header { margin-bottom: 20px; }
+        .topic-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; background: var(--accent); color: white; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
+        .article-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: calc(28px * var(--font-scale)); line-height: 1.3; margin-bottom: 12px; }
+        
+        .article-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .action-btn {
+            padding: 8px 12px;
+            border: 1.5px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+            flex: 0 1 auto;
+        }
+        
+        .action-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--surface);
+        }
+        
+        .action-btn.speaking {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            animation: pulse 1.5s infinite;
+        }
+        
+        .action-btn.bookmarked {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .action-btn.music-playing {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        @media (max-width: 480px) {
+            .article-actions {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                gap: 6px;
+                padding: 2px 0 8px 0;
+                margin: 0 -2px 16px -2px;
+                white-space: nowrap;
+                justify-content: flex-start;
+                align-items: center;
+            }
+            
+            .article-actions::-webkit-scrollbar {
+                display: none;
+            }
+            
+            .action-btn {
+                flex: 0 0 auto;
+                padding: 8px 14px;
+                font-size: 14px;
+                margin: 0;
+                border-radius: 30px;
+                background: var(--surface2);
+                border: 1.5px solid var(--border);
+                min-width: 44px;
+                height: 44px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            }
+            
+            .action-btn .btn-text {
+                display: none;
+            }
+            
+            .action-btn.speaking .btn-text,
+            .action-btn.bookmarked .btn-text,
+            .action-btn.music-playing .btn-text {
+                display: none;
+            }
+            
+            .action-btn:active {
+                background: var(--accent-soft);
+                transform: scale(0.95);
+            }
+            
+            .action-btn .emoji {
+                font-size: 20px;
+                line-height: 1;
+            }
+        }
+        
+        @media (min-width: 481px) {
+            .action-btn {
+                padding: 8px 16px;
+            }
+            
+            .action-btn .emoji {
+                font-size: 16px;
+            }
+            
+            .action-btn .btn-text {
+                display: inline;
+            }
+        }
+
+        .article-content {
+            font-size: calc(16px * var(--font-scale));
+            line-height: calc(1.7 * var(--font-scale));
+            color: var(--text);
+        }
+        
+        .article-content p { margin: 1.2em 0; }
+        .article-content h1, .article-content h2, .article-content h3, .article-content h4 {
+            font-family: 'Syne', sans-serif;
+            margin: 1.5em 0 0.8em;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .article-content h2 { font-size: calc(22px * var(--font-scale)); border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+        .article-content h3 { font-size: calc(18px * var(--font-scale)); }
+        
+        .article-content ul, .article-content ol {
+            margin: 1em 0;
+            padding-left: 2em;
+        }
+        
+        .article-content li { margin: 0.5em 0; }
+        .article-content a { color: var(--accent); text-decoration: none; }
+        .article-content a:hover { text-decoration: underline; }
+        
+        .article-content table {
+            border-collapse: collapse;
+            margin: 1.5em 0;
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .article-content th {
+            background: var(--accent-soft);
+            padding: 10px;
+            font-weight: 600;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .article-content td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .article-content tr:last-child td { border-bottom: none; }
+        
+        .article-content .infobox {
+            float: right;
+            margin: 0 0 20px 20px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            min-width: 250px;
+            max-width: 300px;
+        }
+        
+        .article-content .infobox img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .article-content figure { margin: 20px 0; text-align: center; }
+        
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+        
+        .article-content img:hover {
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .article-content figcaption {
+            margin-top: 8px;
+            font-size: calc(13px * var(--font-scale));
+            color: var(--text2);
+            font-style: italic;
+        }
+        
+        .article-content .thumb {
+            margin: 20px 0;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+        }
+        
+        .article-content .thumbinner { text-align: center; }
+        
+        .article-content .thumbcaption {
+            font-size: calc(13px * var(--font-scale));
+            color: var(--text2);
+            margin-top: 8px;
+            padding: 0 10px;
+        }
+        
+        .article-content .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .article-content .gallerybox {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--surface2);
+        }
+        
+        .article-content .gallerybox .thumb { padding: 0; margin: 0; border: none; background: none; }
+        
+        .article-content .gallerybox img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 0;
+        }
+        
+        .article-content .gallerytext {
+            padding: 8px;
+            font-size: calc(12px * var(--font-scale));
+            color: var(--text2);
+            text-align: center;
+        }
+        
+        .article-footer { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+        .wiki-link { display: block; text-align: center; padding: 14px; background: linear-gradient(135deg, var(--accent), var(--accent-soft)); color: white; border-radius: 14px; text-decoration: none; font-weight: 600; }
+        .nav-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+        .nav-btns .btn { flex: 1; justify-content: center; }
+
+        .rating-box { display: flex; align-items: center; gap: 10px; padding: 14px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 14px; flex-wrap: wrap; }
+        .rating-label { font-size: 14px; font-weight: 600; color: var(--text2); }
+        .rating-btns { display: flex; gap: 8px; }
+        .rate-btn { display: flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 30px; border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; font-weight: 700; font-size: 14px; color: var(--text); }
+        .rate-btn.liked { background: #22c55e; color: white; border-color: #22c55e; }
+        .rate-btn.disliked { background: #ef4444; color: white; border-color: #ef4444; }
+
+        .speech-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .speech-btn {
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .speech-btn.speaking {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .skeleton { height: 16px; border-radius: 8px; background: linear-gradient(90deg, var(--border) 25%, var(--surface2) 50%, var(--border) 75%); background-size: 400%; animation: shimmer 1.3s infinite; margin-bottom: 10px; }
+        @keyframes shimmer { 0%{background-position:100%} 100%{background-position:-100%} }
+
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+        .section-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; }
+        .stat-card .num { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--accent); }
+        .stat-card .lbl { font-size: 11px; color: var(--text2); margin-top: 4px; }
+        .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+        .pill { padding: 5px 12px; border-radius: 20px; background: var(--accent-soft); color: var(--accent); font-size: 12px; font-weight: 600; border: 1px solid var(--accent); }
+        .list { display: flex; flex-direction: column; gap: 8px; }
+        .list-card { background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .list-card:hover { border-color: var(--accent); }
+        .list-card .icon { width: 36px; height: 36px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+        .list-card .info { flex: 1; min-width: 0; }
+        .list-card .c-title { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .list-card .c-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+        .list-card .arr { color: var(--text2); font-size: 16px; flex-shrink: 0; }
+        .remove-btn { padding: 4px 10px; border-radius: 20px; border: 1px solid #fecaca; background: #fef2f2; color: #ef4444; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
+
+        .empty-state { text-align: center; padding: 50px 20px; color: var(--text2); }
+        .empty-state .e-icon { font-size: 48px; margin-bottom: 12px; }
+        .empty-state p { font-size: 15px; line-height: 1.6; }
+
+        .reading-progress {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 40px;
+            background: color-mix(in srgb, var(--surface) 80%, transparent);
+            backdrop-filter: blur(6px);
+            border: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+            z-index: 999;
+            transition: 0.2s;
+            font-family: 'Syne', sans-serif;
+            opacity: 0.9;
+            cursor: pointer;
+        }
+
+        .reading-progress.arrow { font-size: 24px; }
+
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        
+        .article-content .mw-editsection,
+        .article-content .mw-empty-elt,
+        .article-content .hatnote,
+        .article-content .dablink,
+        .article-content .navbox,
+        .article-content .vertical-navbox,
+        .article-content .reflist,
+        .article-content .references {
+            display: none;
+        }
+        
+        .article-content .infobox {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 0 0 20px 20px;
+            float: right;
+            clear: right;
+            max-width: 300px;
+            width: auto;
+        }
+        
+        @media (max-width: 600px) {
+            .article-content .infobox {
+                float: none;
+                margin: 20px 0;
+                max-width: 100%;
+            }
+        }
+        
+        .article-content .infobox th {
+            background: var(--accent-soft);
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .article-content .infobox td { padding: 8px; }
+        
+        .article-content .wikitable {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        
+        .article-content .wikitable th,
+        .article-content .wikitable td {
+            border: 1px solid var(--border);
+            padding: 8px;
+        }
+        
+        .article-content .wikitable th {
+            background: var(--accent-soft);
+            font-weight: 600;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .game-card {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .game-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .game-icon { font-size: 40px; margin-bottom: 12px; }
+        .game-title { font-weight: 700; font-size: 16px; margin-bottom: 6px; }
+        .game-desc { font-size: 12px; color: var(--text2); }
+
+        .guess-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background: var(--surface2);
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .option-btn {
+            padding: 12px;
+            border-radius: 30px;
+            border: 2px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+        .option-btn.correct {
+            background: #22c55e;
+            color: white;
+            border-color: #22c55e;
+        }
+        .option-btn.wrong {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .option-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .fact-puzzle {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 20px 0;
+        }
+        .fact-piece {
+            padding: 12px 20px;
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+            flex: 1 1 auto;
+            min-width: 200px;
+            text-align: center;
+        }
+        .fact-piece.selected {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .fact-piece.correct {
+            background: #22c55e;
+            color: white;
+            border-color: #22c55e;
+        }
+        .fact-piece.wrong {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .quiz-stat {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 20px 0;
+        }
+
+        .battle-card {
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .battle-card:hover {
+            border-color: var(--accent);
+        }
+        .battle-card.selected {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+        .battle-card.winner {
+            background: #22c55e20;
+            border-color: #22c55e;
+        }
+
+        .game-progress {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .game-progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: var(--surface2);
+            border-radius: 30px;
+        }
+
+        /* КРАСИВЫЙ ИНЖЕНЕРНЫЙ КАЛЬКУЛЯТОР */
+        .calculator {
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 650px;
+            width: 100%;
+        }
+        .calc-display {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 28px;
+            font-weight: 500;
+            min-height: 80px;
+            word-wrap: break-word;
+        }
+        .calc-display-small {
+            font-size: 14px;
+            color: var(--text2);
+            margin-bottom: 5px;
+            min-height: 20px;
+        }
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+        }
+        .calc-btn {
+            padding: 12px 4px;
+            border: none;
+            border-radius: 12px;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.1s;
+            min-width: 0;
+            white-space: nowrap;
+        }
+        .calc-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+        .calc-btn.operator {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+        .calc-btn.function {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fbbf24;
+            font-size: 13px;
+        }
+        body.dark .calc-btn.function {
+            background: #422006;
+            color: #fbbf24;
+            border-color: #92400e;
+        }
+        .calc-btn.equals {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .calc-btn.clear {
+            background: #ef444420;
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+        .calc-history {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--surface);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            max-height: 120px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+        .calc-history-item {
+            padding: 5px 0;
+            border-bottom: 1px solid var(--border);
+            color: var(--text2);
+        }
+        .calc-memory {
+            display: flex;
+            gap: 8px;
+            margin: 15px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .memory-btn {
+            padding: 6px 10px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .memory-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+        .calc-mode-switch {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            justify-content: center;
+        }
+        .mode-btn {
+            padding: 6px 12px;
+            border-radius: 30px;
+            border: 2px solid var(--border);
+            background: var(--surface);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .mode-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .const-buttons {
+            display: flex;
+            gap: 6px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .const-btn {
+            padding: 6px 10px;
+            border-radius: 30px;
+            border: 1.5px solid var(--border);
+            background: var(--surface2);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .const-btn:hover {
+            border-color: var(--accent);
+        }
+        
+        @media (max-width: 550px) {
+            .calc-buttons {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            .calc-btn {
+                font-size: 12px;
+                padding: 10px 2px;
+            }
+        }
+        @media (max-width: 450px) {
+            .calc-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .calc-btn.function {
+                font-size: 11px;
+            }
+        }
+
+        .quest-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .quest-card {
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            padding: 16px;
+        }
+        .quest-progress {
+            height: 8px;
+            background: var(--border);
+            border-radius: 10px;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+        .quest-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+        }
+        
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .shop-card {
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .shop-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .shop-icon { font-size: 48px; margin-bottom: 10px; }
+        .shop-title { font-weight: 700; font-size: 18px; margin-bottom: 8px; }
+        .shop-price { font-size: 24px; font-weight: 800; color: var(--shik-color); margin: 10px 0; }
+        .shop-desc { font-size: 13px; color: var(--text2); margin-bottom: 15px; }
+        
+        .share-btn {
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .share-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+        
+        .share-menu {
+            position: absolute;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+        .share-menu.show {
+            display: block;
+        }
+        .share-menu-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+        .share-menu-item:hover {
+            background: var(--surface2);
+        }
+
+        .timer-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .timer-card {
+            flex: 1 1 250px;
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            text-align: center;
+        }
+        .timer-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 48px;
+            font-weight: 700;
+            margin: 20px 0;
+            color: var(--accent);
+        }
+        .timer-controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .timer-controls .btn {
+            flex: 1 1 auto;
+            min-width: 70px;
+            justify-content: center;
+        }
+        .timer-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 30px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .lap-list {
+            margin-top: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+        }
+        .lap-item {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 4px 0;
+            border-bottom: 1px dashed var(--border);
+            color: var(--text2);
+        }
+
+        .export-menu {
+            position: absolute;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+        .export-menu.show {
+            display: block;
+        }
+        .export-menu-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+        .export-menu-item:hover {
+            background: var(--surface2);
+        }
+
+        .auth-container {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 30px;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            text-align: center;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: var(--text2);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        
+        .auth-tab.active {
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+        
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .auth-form.hidden {
+            display: none;
+        }
+        
+        .auth-input {
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            background: var(--surface2);
+            color: var(--text);
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .auth-btn {
+            padding: 14px;
+            border: none;
+            border-radius: 30px;
+            background: var(--accent);
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .auth-btn:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+        
+        .auth-error {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+        
+        .post-article {
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+        }
+        
+        .post-title {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            background: var(--surface);
+            color: var(--text);
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .post-content {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            background: var(--surface);
+            color: var(--text);
+            font-size: 16px;
+            min-height: 150px;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+        
+        .post-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 30px;
+            background: var(--accent);
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .user-articles {
+            margin-top: 20px;
+        }
+        
+        .user-article {
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .user-article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .user-article-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: var(--accent);
+            cursor: pointer;
+        }
+        
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .author-avatar:hover {
+            transform: scale(1.1);
+        }
+        
+        .author-gang {
+            font-size: 20px;
+            margin-left: 5px;
+        }
+        
+        .user-article-time {
+            font-size: 12px;
+            color: var(--text2);
+        }
+        
+        .user-article-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .user-article-content {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text2);
+            margin-bottom: 15px;
+        }
+        
+        .user-article-footer {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .reaction-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--text2);
+            cursor: pointer;
+        }
+        
+        .reaction-btn.liked {
+            background: #22c55e20;
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+        
+        .reaction-btn.disliked {
+            background: #ef444420;
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        .repost-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--text2);
+            cursor: pointer;
+        }
+        
+        .repost-btn.reposted {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .article-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+        
+        .edit-btn, .delete-btn {
+            padding: 5px 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            background: transparent;
+            cursor: pointer;
+        }
+        
+        .delete-btn {
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+        
+        .search-articles {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-articles input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            background: var(--surface2);
+            color: var(--text);
+        }
+        
+        .search-articles button {
+            padding: 12px 20px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--accent-soft);
+            border-radius: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .user-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .user-avatar-large:hover {
+            transform: scale(1.05);
+        }
+        
+        .user-details {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-gang {
+            font-size: 28px;
+        }
+        
+        .user-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .stat-item:hover .stat-value {
+            color: var(--accent);
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text2);
+        }
+        
+        .avatar-gallery {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: var(--surface2);
+            border-radius: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .avatar-gallery {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+        
+        .gallery-emoji {
+            font-size: 30px;
+            padding: 12px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 15px;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            transition: all 0.2s;
+        }
+        
+        .gallery-emoji:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+        
+        .gallery-emoji.selected {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .color-picker {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: var(--surface2);
+            border-radius: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .color-picker {
+                grid-template-columns: repeat(8, 1fr);
+            }
+        }
+        
+        .color-option {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 15px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.05);
+        }
+        
+        .color-option.selected {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+        
+        .ban-message {
+            background: #ef444420;
+            border: 2px solid #ef4444;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            color: #ef4444;
+            margin: 20px 0;
+        }
+        
+        .profile-header {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+        
+        .profile-info {
+            flex: 1;
+        }
+        
+        .profile-username {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .profile-gang {
+            font-size: 40px;
+        }
+        
+        .profile-bio {
+            font-size: 16px;
+            color: var(--text2);
+            margin-bottom: 15px;
+        }
+        
+        .profile-stats {
+            display: flex;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        
+        .profile-stat {
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .profile-stat:hover .profile-stat-value {
+            color: var(--accent);
+        }
+        
+        .profile-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .profile-stat-label {
+            font-size: 14px;
+            color: var(--text2);
+        }
+        
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .profile-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+        
+        .profile-tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 20px;
+        }
+        
+        .profile-tab.active {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+        
+        .gangs-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .gang-card {
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            border-radius: 30px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gang-card.winner {
+            border-color: gold;
+            box-shadow: 0 0 20px gold;
+        }
+        
+        .gang-emoji {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+        
+        .gang-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .gang-count {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        
+        .gang-rank {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+        }
+        
+        .gang-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: var(--accent);
+            color: white;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .leaderboard {
+            margin-top: 30px;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .leaderboard-rank {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent);
+            width: 50px;
+            text-align: center;
+        }
+        
+        .leaderboard-gang {
+            font-size: 32px;
+        }
+        
+        .leaderboard-name {
+            flex: 1;
+            font-weight: 600;
+        }
+        
+        .leaderboard-count {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .users-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        .user-card:hover {
+            border-color: var(--accent);
+        }
+        
+        .user-card-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .user-card-info {
+            flex: 1;
+        }
+        
+        .user-card-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-card-gang {
+            font-size: 20px;
+        }
+        
+        .user-card-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+            font-size: 12px;
+            color: var(--text2);
+        }
+        
+        .follow-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+        }
+        
+        .follow-btn.following {
+            background: var(--surface);
+            color: var(--text);
+            border: 1.5px solid var(--border);
+        }
+        
+        .music-player {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 220px;
+            background: var(--surface);
+            border: 2px solid var(--accent);
+            border-radius: 30px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+            cursor: move;
+            user-select: none;
+        }
+        
+        .music-player.show {
+            display: block;
+        }
+        
+        .music-player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: move;
+        }
+        
+        .music-player-header h3 {
+            font-size: 14px;
+            color: var(--accent);
+            margin: 0;
+        }
+        
+        .close-music-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: var(--text2);
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+        
+        .close-music-btn:hover {
+            background: var(--surface2);
+            color: var(--text);
+        }
+        
+        .music-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .music-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: var(--surface2);
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .music-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+        
+        .music-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .volume-slider {
+            width: 100%;
+            accent-color: var(--accent);
+        }
+        
+        .music-select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+        
+        .camera-container {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+        
+        #video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        #canvas {
+            display: none;
+        }
+        
+        .camera-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .photo-preview {
+            max-width: 300px;
+            margin: 20px auto;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            overflow: hidden;
+            display: none;
+        }
+        
+        .photo-preview.show {
+            display: block;
+        }
+        
+        .photo-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* Стили для блокнота */
+        .notebook-container {
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .notebook-toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .notebook-textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            background: var(--surface);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+        
+        .notebook-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .notebook-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: flex-end;
+            color: var(--text2);
+            font-size: 14px;
+        }
+        
+        .notebook-save-status {
+            margin-left: 10px;
+            font-weight: 600;
+        }
+        
+        .saved {
+            color: #22c55e;
+        }
+        
+        .not-saved {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body data-topic="default">
+<div class="topbar">
+    <div class="topbar-row1">
+        <span class="logo" onclick="showHome()">Wiki✦Read</span>
+        <div class="stats-mini">
+            <span>Ⓛ<span id="levelDisplay">1</span></span>
+            <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+            <span id="xpDisplay">0</span>
+            <span>🪙 <span id="coinDisplay">50</span></span>
+            <span>💸 <span id="shikDisplay">0</span></span>
+        </div>
+        <div class="search-wrap">
+            <input type="text" id="searchInput" placeholder="Поиск в Википедии...">
+            <button class="search-btn" onclick="searchWiki()"><span class="btn-full">🔍 Найти</span><span class="btn-short">🔍</span></button>
+        </div>
+    </div>
+    <div class="topbar-row2">
+        <div class="lang-group" id="langChips">
+            <button class="lang-chip" data-lang="ru">🇷🇺</button>
+            <button class="lang-chip" data-lang="en">🇬🇧</button>
+            <button class="lang-chip" data-lang="de">🇩🇪</button>
+            <button class="lang-chip" data-lang="fr">🇫🇷</button>
+            <button class="lang-chip" data-lang="es">🇪🇸</button>
+            <button class="lang-chip" data-lang="it">🇮🇹</button>
+            <button class="lang-chip" data-lang="pt">🇵🇹</button>
+            <button class="lang-chip" data-lang="nl">🇳🇱</button>
+            <button class="lang-chip" data-lang="pl">🇵🇱</button>
+            <button class="lang-chip" data-lang="uk">🇺🇦</button>
+        </div>
+        <select id="langSelectBig" class="lang-select-big" onchange="setLang(this.value)">
+            <option value="ru">🇷🇺</option>
+            <option value="en">🇬🇧</option>
+            <option value="de">🇩🇪</option>
+            <option value="fr">🇫🇷</option>
+            <option value="es">🇪🇸</option>
+            <option value="it">🇮🇹</option>
+            <option value="pt">🇵🇹</option>
+            <option value="nl">🇳🇱</option>
+            <option value="pl">🇵🇱</option>
+            <option value="uk">🇺🇦</option>
+        </select>
+        <div class="font-wrap">
+            <span>A</span>
+            <input type="range" id="fontRange" min="0.8" max="1.4" step="0.1" value="1" oninput="setFontScale(this.value)">
+            <span style="font-size:17px;font-weight:600;">A</span>
+        </div>
+        <div class="sep"></div>
+        <button class="btn btn-ghost" onclick="showQuests()">📋</button>
+        <button class="btn btn-ghost" onclick="randomArticle()">🎲</button>
+        <button class="btn btn-ghost" onclick="showGamesHub()">🎮</button>
+        <button class="btn btn-ghost" onclick="showCalculator()">🧮</button>
+        <button class="btn btn-ghost" onclick="showTimerPage()">⏱️</button>
+        <button class="btn btn-ghost" onclick="showUserArticles()">📌</button>
+        <button class="btn btn-ghost" onclick="showGangs()">💣</button>
+        <button class="btn btn-ghost" onclick="showMusicPlayer()">🎧</button>
+        <button class="btn btn-ghost" onclick="showCamera()">📸</button>
+        <button class="btn btn-ghost" onclick="showBookmarks()">🔖</button>
+        <button class="btn btn-ghost" onclick="showHistory()">📜</button>
+        <button class="btn btn-ghost" onclick="showShop()">🏪</button>
+        <!-- Новая кнопка блокнота -->
+        <button class="btn btn-ghost" onclick="showNotebook()">✏️</button>
+        <button class="btn btn-ghost" id="themeBtn" onclick="toggleTheme()">🌙</button>
+    </div>
+</div>
+<div class="main">
+    <div class="frame" id="frame"></div>
+</div>
+<div class="reading-progress" id="readingProgress" onclick="handleProgressClick()">0%</div>
+
+<div class="music-player" id="musicPlayer">
+    <div class="music-player-header" id="musicPlayerHeader">
+        <h3>🎧 Музыкальный плеер</h3>
+        <button class="close-music-btn" onclick="hideMusicPlayer()">✕</button>
+    </div>
+    <select class="music-select" id="musicSelect" onchange="changeMusic()">
+        <option value="none">🎵 Без музыки</option>
+        <option value="chill">🌊 Чилл волны</option>
+        <option value="lofi">🎸 Lofi beats</option>
+        <option value="epic">⚔️ Эпик</option>
+        <option value="piano">🎹 Пианино</option>
+        <option value="synth">🌈 Синтвейв</option>
+    </select>
+    <div class="music-controls">
+        <button class="music-btn" id="playBtn" onclick="togglePlay()">▶️</button>
+        <button class="music-btn" onclick="stopMusic()">⏹️</button>
+        <button class="music-btn" onclick="muteMusic()" id="muteBtn">🔊</button>
+    </div>
+    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="0.5" onchange="changeVolume()">
+</div>
+
+<script>
+// Перетаскивание плеера
+const musicPlayer = document.getElementById('musicPlayer');
+const musicPlayerHeader = document.getElementById('musicPlayerHeader');
+let isDragging = false;
+let offsetX, offsetY;
+
+musicPlayerHeader.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.clientX - musicPlayer.offsetLeft;
+    offsetY = e.clientY - musicPlayer.offsetTop;
+    musicPlayer.style.cursor = 'grabbing';
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+        musicPlayer.style.left = (e.clientX - offsetX) + 'px';
+        musicPlayer.style.top = (e.clientY - offsetY) + 'px';
+        musicPlayer.style.right = 'auto';
+        musicPlayer.style.bottom = 'auto';
+    }
+});
+
+document.addEventListener('mouseup', () => {
+    isDragging = false;
+    musicPlayer.style.cursor = 'move';
+});
+
+// Камера
+let videoStream = null;
+
+function showCamera() {
+    stopSpeech();
+    setTopic('default');
+    
+    frame(`
+        <div class="section-header">
+            <div class="section-title">📸 Фотоаппарат</div>
+            <button class="btn btn-ghost" onclick="showHome()">← На главную</button>
+        </div>
+        <div class="camera-container">
+            <div class="video-wrapper">
+                <video id="video" autoplay playsinline></video>
+            </div>
+            <canvas id="canvas"></canvas>
+            <div class="camera-controls">
+                <button class="btn btn-primary" onclick="takePhoto()">📸 Сделать фото</button>
+                <button class="btn btn-ghost" onclick="stopCamera()">⏹️ Выключить камеру</button>
+            </div>
+            <div class="photo-preview" id="photoPreview">
+                <img id="photoImg" src="" alt="Фото">
+                <div style="margin-top: 10px;">
+                    <button class="btn btn-success" onclick="downloadPhoto()">💾 Скачать</button>
+                </div>
+            </div>
+        </div>
+    `);
+    
+    startCamera();
+}
+
+function startCamera() {
+    const video = document.getElementById('video');
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                videoStream = stream;
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                alert('Не удалось включить камеру: ' + err.message);
+            });
+    } else {
+        alert('Ваш браузер не поддерживает камеру');
+    }
+}
+
+function stopCamera() {
+    if (videoStream) {
+        videoStream.getTracks().forEach(track => track.stop());
+        videoStream = null;
+    }
+    document.getElementById('photoPreview').classList.remove('show');
+}
+
+function takePhoto() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const photoPreview = document.getElementById('photoPreview');
+    const photoImg = document.getElementById('photoImg');
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    const photoData = canvas.toDataURL('image/png');
+    photoImg.src = photoData;
+    photoPreview.classList.add('show');
+    
+    window.lastPhoto = photoData;
+}
+
+function downloadPhoto() {
+    if (window.lastPhoto) {
+        const link = document.createElement('a');
+        link.download = 'wiki-read-photo-' + new Date().getTime() + '.png';
+        link.href = window.lastPhoto;
+        link.click();
+    }
+}
+
+function hideMusicPlayer() {
+    document.getElementById('musicPlayer').classList.remove('show');
+}
+
+const BANNED_WORDS = ['хуй', 'нах', 'пенис', 'нахал', 'пизда', 'еблан', 'сука', 'блять', 'нахуй', 'пидор', 'гандон', 'шлюха', 'мразь', 'тварь', 'ублюдок', 'долбоеб', 'ебать', 'залупа', 'мудак', 'педик', 'секс', 'порно', 'сиськи', 'шалава', 'расчленёнка', 'рсчл', 'бля', 'похуй', 'поебать', 'говно', 'fuck', 'porno', 'sex', 'dick', 'bitch'];
+function checkForBan(text) {
+    const lower = text.toLowerCase();
+    for (let word of BANNED_WORDS) if (lower.includes(word)) return true;
+    return false;
+}
+const GANG_BY_EMOJI = {
+    '😎': '👑 Крутые', '🦊': '🦊 Лисы', '🐱': '🐱 Коты', '🐼': '🐼 Панды', '🐸': '🐸 Лягушки', '🐧': '🐧 Пингвины', '🦁': '🦁 Львы', '🐨': '🐨 Коалы',
+    '😊': '😊 Улыбки', '🤓': '🤓 Ботаны', '🥳': '🥳 Тусовщики', '😈': '😈 Черти', '👽': '👽 Пришельцы', '🤖': '🤖 Роботы', '👻': '👻 Призраки', '💀': '💀 Мрачные',
+    '❤️': '❤️ Сердечки', '💙': '💙 Синие', '💚': '💚 Зеленые', '💛': '💛 Желтые', '💜': '💜 Фиолетовые', '🖤': '🖤 Черные', '🤍': '🤍 Белые', '🤎': '🤎 Коричневые',
+    '👻': '👻 Призраки', '💀': '💀 Мрачные', '🧟': '🧟 Зомби', '💩': '💩 Какашки',
+    '🤖': '🤖 Роботы', '🦾': '🦾 Киборги', '🦿': '🦿 Меха', '📱': '📱 Гаджеты', '💻': '💻 Хакеры',
+    '😺': '😺 Котики', '😸': '😸 Кис-кис', '😹': '😹 Смешные коты', '😻': '😻 Любви коты', '😼': '😼 Хитрые', '😽': '😽 Целующиеся', '🙀': '🙀 Охреневшие', '😿': '😿 Грустные', '😾': '😾 Злые',
+    '🐶': '🐶 Собаки', '🐕': '🐕 Пёсики', '🐩': '🐩 Пудели',
+    '🦊': '🦊 Лисы', '🦝': '🦝 Еноты',
+    '🐼': '🐼 Панды', '🐻‍❄️': '🐻‍❄️ Белые мишки',
+    '🧙': '🧙 Маги', '🧝': '🧝 Эльфы', '🧚': '🧚 Феи', '🔮': '🔮 Гадалки',
+    '🦸': '🦸 Герои', '🦹': '🦹 Злодеи', '⚔️': '⚔️ Воины',
+    '🧛': '🧛 Вампиры', '🦇': '🦇 Летучие мыши',
+    '❤️': '❤️ Красные', '🧡': '🧡 Оранжевые', '💛': '💛 Желтые', '💚': '💚 Зеленые', '💙': '💙 Синие', '💜': '💜 Фиолетовые', '🖤': '🖤 Черные', '🤍': '🤍 Белые', '🤎': '🤎 Коричневые', '💔': '💔 Разбитые', '❤️‍🔥': '❤️‍🔥 Огненные', '❤️‍🩹': '❤️‍🩹 Лечащие',
+    '😇': '😇 Ангелы', '🙃': '🙃 Перевертыши', '😉': '😉 Подмигивающие', '😌': '😌 Довольные', '😍': '😍 Влюбленные', '🥰': '🥰 Обнимашки', '😘': '😘 Воздушные поцелуи', '😗': '😗 Целующиеся', '😙': '😙 Свистящие', '😚': '😚 Чмокающие'
+};
+function getGangByEmoji(emoji) {
+    return GANG_BY_EMOJI[emoji] || '👤 Одиночка';
+}
+let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+let users = JSON.parse(localStorage.getItem('users')) || [];
+let userArticles = JSON.parse(localStorage.getItem('userArticles')) || [];
+let bannedUsers = JSON.parse(localStorage.getItem('bannedUsers')) || [];
+let follows = JSON.parse(localStorage.getItem('follows')) || {};
+let reposts = JSON.parse(localStorage.getItem('reposts')) || {};
+
+let audio = new Audio();
+let isPlaying = false;
+let isMuted = false;
+let currentMusic = 'none';
+
+const MUSIC_FILES = {
+    'chill': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+    'lofi': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+    'epic': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+    'piano': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+    'synth': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'
+};
+
+function showMusicPlayer() {
+    const player = document.getElementById('musicPlayer');
+    player.classList.toggle('show');
+}
+
+function changeMusic() {
+    const select = document.getElementById('musicSelect');
+    currentMusic = select.value;
+    if (currentMusic === 'none') {
+        stopMusic();
+    } else {
+        audio.src = MUSIC_FILES[currentMusic];
+        audio.loop = true;
+        audio.volume = document.getElementById('volumeSlider').value;
+        audio.play();
+        isPlaying = true;
+        document.getElementById('playBtn').textContent = '⏸️';
+    }
+}
+
+function togglePlay() {
+    if (currentMusic === 'none') {
+        document.getElementById('musicSelect').value = 'chill';
+        changeMusic();
+    } else {
+        if (isPlaying) {
+            audio.pause();
+            document.getElementById('playBtn').textContent = '▶️';
+        } else {
+            audio.play();
+            document.getElementById('playBtn').textContent = '⏸️';
+        }
+        isPlaying = !isPlaying;
+    }
+}
+
+function stopMusic() {
+    audio.pause();
+    audio.currentTime = 0;
+    isPlaying = false;
+    document.getElementById('playBtn').textContent = '▶️';
+}
+
+function muteMusic() {
+    isMuted = !isMuted;
+    audio.muted = isMuted;
+    document.getElementById('muteBtn').textContent = isMuted ? '🔇' : '🔊';
+}
+
+function changeVolume() {
+    audio.volume = document.getElementById('volumeSlider').value;
+}
+
+function stopMusicForSpeech() {
+    if (isPlaying) {
+        audio.pause();
+    }
+}
+
+function resumeMusicAfterSpeech() {
+    if (isPlaying) {
+        audio.play();
+    }
+}
+
+const AVATAR_EMOJIS = [
+    '😎', '🦊', '🐱', '🐼', '🐸', '🐧', '🦁', '🐨',
+    '😊', '🤓', '🥳', '😈', '👽', '🤖', '👻', '💀',
+    '❤️', '💙', '💚', '💛', '💜', '🖤', '🤍', '🤎',
+    '👻', '💀', '🧟', '💩',
+    '🤖', '🦾', '🦿', '📱', '💻',
+    '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾',
+    '🐶', '🐕', '🐩',
+    '🦊', '🦝',
+    '🐼', '🐻‍❄️',
+    '🧙', '🧝', '🧚', '🔮',
+    '🦸', '🦹', '⚔️',
+    '🧛', '🦇',
+    '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❤️‍🔥', '❤️‍🩹',
+    '😇', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚'
+];
+const AVATAR_COLORS = [
+    '#ff0000', '#ff5500', '#ffaa00', '#ffff00', '#aaff00', '#55ff00',
+    '#00ff00', '#00ff55', '#00ffaa', '#00ffff', '#00aaff', '#0055ff',
+    '#0000ff', '#5500ff', '#aa00ff', '#ff00ff', '#ff00aa', '#ff0055',
+    '#ff4444', '#ff8888', '#ffcccc', '#000000', '#333333', '#666666'
+];
+function saveUsers() {
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('bannedUsers', JSON.stringify(bannedUsers));
+    localStorage.setItem('follows', JSON.stringify(follows));
+    localStorage.setItem('reposts', JSON.stringify(reposts));
+}
+function saveCurrentUser() {
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+}
+function saveUserArticles() {
+    localStorage.setItem('userArticles', JSON.stringify(userArticles));
+}
+function getGangStats() {
+    const stats = {};
+    users.forEach(user => {
+        const gang = getGangByEmoji(user.avatar || '😎');
+        stats[gang] = (stats[gang] || 0) + 1;
+    });
+    return stats;
+}
+function getTopGang() {
+    const stats = getGangStats();
+    let topGang = '👤 Одиночка';
+    let topCount = 0;
+    for (let [gang, count] of Object.entries(stats)) {
+        if (count > topCount) {
+            topCount = count;
+            topGang = gang;
+        }
+    }
+    return { gang: topGang, count: topCount };
+}
+function showAvatarSelector() {
+    if (!currentUser) return;
+    const user = users.find(u => u.username === currentUser.username);
+    let emojiHtml = AVATAR_EMOJIS.map(emoji => 
+        `<div class="gallery-emoji ${user?.avatar === emoji ? 'selected' : ''}" onclick="selectAvatar('${emoji}')">${emoji}</div>`
+    ).join('');
+    let colorHtml = AVATAR_COLORS.map(color => 
+        `<div class="color-option ${user?.color === color ? 'selected' : ''}" style="background: ${color};" onclick="selectColor('${color}')"></div>`
+    ).join('');
+    frame(`
+        <div class="auth-container">
+            <h2>Настройка профиля 🎨</h2>
+            <div style="display: flex; justify-content: center; margin: 20px 0;">
+                <div class="user-avatar-large" style="background: ${user?.color || '#3b82f6'};">
+                    ${user?.avatar || '😎'}
+                </div>
+            </div>
+            <div style="margin: 10px 0; font-size: 18px;">Твоя банда: ${getGangByEmoji(user?.avatar || '😎')}</div>
+            <h3 style="margin:20px 0 10px;">Выбери смайлик</h3>
+            <div class="avatar-gallery">${emojiHtml}</div>
+            <h3 style="margin:20px 0 10px;">Выбери цвет фона</h3>
+            <div class="color-picker">${colorHtml}</div>
+            <button class="btn btn-primary" onclick="showUserArticles()" style="margin-top:20px;">✓ Сохранить</button>
+        </div>
+    `);
+}
+function selectAvatar(emoji) {
+    if (!currentUser) return;
+    const userIndex = users.findIndex(u => u.username === currentUser.username);
+    if (userIndex !== -1) {
+        users[userIndex].avatar = emoji;
+        currentUser.avatar = emoji;
+        saveUsers();
+        saveCurrentUser();
+        showAvatarSelector();
+    }
+}
+function selectColor(color) {
+    if (!currentUser) return;
+    const userIndex = users.findIndex(u => u.username === currentUser.username);
+    if (userIndex !== -1) {
+        users[userIndex].color = color;
+        currentUser.color = color;
+        saveUsers();
+        saveCurrentUser();
+        showAvatarSelector();
+    }
+}
+function showAuth() {
+    frame(`
+        <div class="auth-container">
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')">Вход</button>
+                <button class="auth-tab" onclick="switchAuthTab('register')">Регистрация</button>
+            </div>
+            <div id="loginForm" class="auth-form">
+                <input type="text" id="loginUsername" class="auth-input" placeholder="Логин">
+                <input type="password" id="loginPassword" class="auth-input" placeholder="Пароль">
+                <button class="auth-btn" onclick="login()">Войти</button>
+            </div>
+            <div id="registerForm" class="auth-form hidden">
+                <input type="text" id="regUsername" class="auth-input" placeholder="Логин">
+                <input type="password" id="regPassword" class="auth-input" placeholder="Пароль">
+                <input type="password" id="regConfirm" class="auth-input" placeholder="Повторите">
+                <button class="auth-btn" onclick="register()">Зарегистр.</button>
+            </div>
+            <div id="authError" style="color:#ef4444;"></div>
+        </div>
+    `);
+}
+function switchAuthTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('registerForm').classList.add('hidden');
+    if (tab === 'login') {
+        document.querySelector('.auth-tab:first-child').classList.add('active');
+        document.getElementById('loginForm').classList.remove('hidden');
+    } else {
+        document.querySelector('.auth-tab:last-child').classList.add('active');
+        document.getElementById('registerForm').classList.remove('hidden');
+    }
+}
+function register() {
+    const username = document.getElementById('regUsername').value.trim();
+    const pass = document.getElementById('regPassword').value;
+    const confirm = document.getElementById('regConfirm').value;
+    if (!username || !pass) return showError('Заполните поля');
+    if (pass !== confirm) return showError('Пароли не совпадают');
+    if (users.some(u => u.username === username)) return showError('Логин занят');
+    if (bannedUsers.includes(username)) return showError('Логин забанен');
+    const randomEmoji = AVATAR_EMOJIS[Math.floor(Math.random() * AVATAR_EMOJIS.length)];
+    const randomColor = AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
+    users.push({ 
+        username, 
+        password: pass,
+        avatar: randomEmoji,
+        color: randomColor,
+        createdAt: new Date().toISOString(),
+        followers: [],
+        following: [],
+        level: 1,
+        xp: 0,
+        coins: 50,
+        shik: 0
+    });
+    saveUsers();
+    currentUser = { 
+        username, 
+        avatar: randomEmoji,
+        color: randomColor,
+        level: 1,
+        xp: 0,
+        coins: 50,
+        shik: 0
+    };
+    saveCurrentUser();
+    showHome();
+}
+function login() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+    const user = users.find(u => u.username === username && u.password === pass);
+    if (!user) return showError('Неверный логин/пароль');
+    if (bannedUsers.includes(username)) return showError('Вас забанили');
+    currentUser = { 
+        username: user.username,
+        avatar: user.avatar || '😎',
+        color: user.color || '#3b82f6',
+        level: user.level || 1,
+        xp: user.xp || 0,
+        coins: user.coins || 50,
+        shik: user.shik || 0
+    };
+    saveCurrentUser();
+    updatePlayerUIFromUser();
+    showHome();
+}
+function logout() {
+    currentUser = null;
+    localStorage.removeItem('currentUser');
+    showUserArticles();
+}
+function showError(msg) {
+    document.getElementById('authError').innerText = msg;
+}
+function updatePlayerUIFromUser() {
+    if (currentUser) {
+        document.getElementById('levelDisplay').innerText = currentUser.level || 1;
+        document.getElementById('xpDisplay').innerText = currentUser.xp || 0;
+        document.getElementById('coinDisplay').innerText = currentUser.coins || 50;
+        document.getElementById('shikDisplay').innerText = currentUser.shik || 0;
+        const xpInLevel = (currentUser.xp || 0) % 200;
+        const percent = (xpInLevel / 200) * 100;
+        document.getElementById('xpFill').style.width = percent + '%';
+    }
+}
+function showProfile(username) {
+    const user = users.find(u => u.username === username);
+    if (!user) return showHome();
+    const userPosts = userArticles.filter(a => a.author === username);
+    const userReposts = Object.entries(reposts)
+        .filter(([articleId, users]) => users && users.includes(username))
+        .map(([articleId]) => userArticles.find(a => a.id === articleId))
+        .filter(a => a);
+    const isFollowing = currentUser && follows[currentUser.username]?.includes(username);
+    const followerCount = follows[username]?.length || 0;
+    const followingCount = user.following?.length || 0;
+    const gang = getGangByEmoji(user.avatar || '😎');
+    let postsHtml = userPosts.length > 0 ? userPosts.map(article => `
+        <div class="user-article" onclick="loadArticle('${article.id}')">
+            <div class="user-article-title">${article.title}</div>
+            <div class="user-article-content">${article.content.substring(0, 100)}...</div>
+            <div class="user-article-footer">
+                <span>👍 ${article.likes || 0}</span>
+                <span>👎 ${article.dislikes || 0}</span>
+                <span>🔄 ${reposts[article.id]?.length || 0}</span>
+            </div>
+        </div>
+    `).join('') : '<p style="text-align:center; padding:20px;">Нет статей</p>';
+    let repostsHtml = userReposts.length > 0 ? userReposts.map(article => `
+        <div class="user-article" onclick="loadArticle('${article.id}')">
+            <div class="user-article-title">🔄 ${article.title}</div>
+            <div class="user-article-content">Автор: @${article.author}</div>
+            <div class="user-article-footer">
+                <span>👍 ${article.likes || 0}</span>
+                <span>👎 ${article.dislikes || 0}</span>
+            </div>
+        </div>
+    `).join('') : '<p style="text-align:center; padding:20px;">Нет репостов</p>';
+    frame(`
+        <div style="margin-bottom:20px;"><button class="btn" onclick="showUserArticles()">← Назад</button></div>
+        <div class="profile-header">
+            <div class="profile-avatar" style="background: ${user.color || '#3b82f6'};">
+                ${user.avatar || '😎'}
+            </div>
+            <div class="profile-info">
+                <div class="profile-username">
+                    @${username}
+                    <span class="profile-gang">${gang.split(' ')[0]}</span>
+                </div>
+                <div class="profile-bio">${gang}</div>
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${userPosts.length}</div>
+                        <div class="profile-stat-label">статьи</div>
+                    </div>
+                    <div class="profile-stat" onclick="showFollowers('${username}')">
+                        <div class="profile-stat-value">${followerCount}</div>
+                        <div class="profile-stat-label">подписчики</div>
+                    </div>
+                    <div class="profile-stat" onclick="showFollowing('${username}')">
+                        <div class="profile-stat-value">${followingCount}</div>
+                        <div class="profile-stat-label">подписки</div>
+                    </div>
+                </div>
+                ${currentUser && currentUser.username !== username ? `
+                    <div class="profile-actions">
+                        <button class="btn ${isFollowing ? 'btn-ghost' : 'btn-primary'}" onclick="toggleFollow('${username}')">
+                            ${isFollowing ? '✓ Подписано' : '+ Подписаться'}
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+        <div class="profile-tabs">
+            <button class="profile-tab active" onclick="showProfilePosts('${username}')">📝 Статьи</button>
+            <button class="profile-tab" onclick="showProfileReposts('${username}')">🔄 Репосты</button>
+        </div>
+        <div id="profile-content">${postsHtml}</div>
+    `);
+    window.showProfilePosts = (username) => {
+        document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById('profile-content').innerHTML = postsHtml;
+    };
+    window.showProfileReposts = (username) => {
+        document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById('profile-content').innerHTML = repostsHtml;
+    };
+}
+function toggleFollow(username) {
+    if (!currentUser) return showAuth();
+    if (!follows[currentUser.username]) follows[currentUser.username] = [];
+    if (!follows[username]) follows[username] = [];
+    const index = follows[currentUser.username].indexOf(username);
+    if (index === -1) {
+        follows[currentUser.username].push(username);
+        follows[username].push(currentUser.username);
+    } else {
+        follows[currentUser.username].splice(index, 1);
+        const followerIndex = follows[username].indexOf(currentUser.username);
+        if (followerIndex !== -1) follows[username].splice(followerIndex, 1);
+    }
+    saveUsers();
+    showProfile(username);
+}
+function showFollowers(username) {
+    const user = users.find(u => u.username === username);
+    if (!user) return;
+    const followersList = follows[username] || [];
+    const followersUsers = users.filter(u => followersList.includes(u.username));
+    let html = '<div style="margin-bottom:20px;"><button class="btn" onclick="showProfile(\'' + username + '\')">← Назад</button></div>';
+    html += '<h2 style="margin-bottom:20px;">Подписчики @' + username + '</h2>';
+    if (followersUsers.length === 0) {
+        html += '<p style="text-align:center;">Нет подписчиков</p>';
+    } else {
+        html += '<div class="users-list">';
+        followersUsers.forEach(u => {
+            html += `
+                <div class="user-card" onclick="showProfile('${u.username}')">
+                    <div class="user-card-avatar" style="background: ${u.color || '#3b82f6'};">
+                        ${u.avatar || '😎'}
+                    </div>
+                    <div class="user-card-info">
+                        <div class="user-card-name">
+                            @${u.username}
+                            <span class="user-card-gang">${getGangByEmoji(u.avatar || '😎').split(' ')[0]}</span>
+                        </div>
+                        <div class="user-card-stats">
+                            <span>📝 ${userArticles.filter(a => a.author === u.username).length}</span>
+                            <span>👥 ${follows[u.username]?.length || 0}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    frame(html);
+}
+function showFollowing(username) {
+    const user = users.find(u => u.username === username);
+    if (!user) return;
+    const followingList = follows[username] || [];
+    const followingUsers = users.filter(u => followingList.includes(u.username));
+    let html = '<div style="margin-bottom:20px;"><button class="btn" onclick="showProfile(\'' + username + '\')">← Назад</button></div>';
+    html += '<h2 style="margin-bottom:20px;">Подписки @' + username + '</h2>';
+    if (followingUsers.length === 0) {
+        html += '<p style="text-align:center;">Нет подписок</p>';
+    } else {
+        html += '<div class="users-list">';
+        followingUsers.forEach(u => {
+            html += `
+                <div class="user-card" onclick="showProfile('${u.username}')">
+                    <div class="user-card-avatar" style="background: ${u.color || '#3b82f6'};">
+                        ${u.avatar || '😎'}
+                    </div>
+                    <div class="user-card-info">
+                        <div class="user-card-name">
+                            @${u.username}
+                            <span class="user-card-gang">${getGangByEmoji(u.avatar || '😎').split(' ')[0]}</span>
+                        </div>
+                        <div class="user-card-stats">
+                            <span>📝 ${userArticles.filter(a => a.author === u.username).length}</span>
+                            <span>👥 ${follows[u.username]?.length || 0}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    frame(html);
+}
+function showGangs() {
+    const gangCounts = {};
+    users.forEach(user => {
+        const gang = getGangByEmoji(user.avatar || '😎');
+        gangCounts[gang] = (gangCounts[gang] || 0) + 1;
+    });
+    const sortedGangs = Object.entries(gangCounts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([gang, count], index) => ({ gang, count, rank: index + 1 }));
+    const userGang = currentUser ? getGangByEmoji(currentUser.avatar || '😎') : null;
+    const userRank = sortedGangs.find(g => g.gang === userGang);
+    frame(`
+        <div class="section-header">
+            <div class="section-title">💣 БИТВА БАНД</div>
+            <button class="btn" onclick="showHome()">← На главную</button>
+        </div>
+        ${userGang ? `
+            <div style="background: var(--accent-soft); border-radius: 30px; padding: 20px; margin: 20px 0; text-align: center;">
+                <div style="font-size: 20px; margin-bottom: 10px;">Твоя банда</div>
+                <div style="font-size: 28px; font-weight: 700; margin-bottom: 10px;">${userGang}</div>
+                <div style="font-size: 36px; font-weight: 800; color: var(--accent);">
+                    ${gangCounts[userGang] || 0}
+                </div>
+                <div>участников</div>
+                <div style="margin-top: 10px; font-size: 18px;">
+                    Место в рейтинге: <strong>#${userRank?.rank || '???'}</strong>
+                    ${userRank?.rank === 1 ? ' 🏆' : ''}
+                </div>
+            </div>
+        ` : ''}
+        <h2 style="margin: 30px 0 20px;">🏆 Рейтинг банд</h2>
+        <div class="leaderboard">
+            ${sortedGangs.map(g => `
+                <div class="leaderboard-item ${g.gang === userGang ? 'winner' : ''}">
+                    <div class="leaderboard-rank">#${g.rank}</div>
+                    <div class="leaderboard-name">${g.gang}</div>
+                    <div class="leaderboard-count">${g.count}</div>
+                </div>
+            `).join('')}
+        </div>
+    `);
+}
+function showUserArticles() {
+    if (!currentUser) {
+        frame(`
+            <div class="auth-container">
+                <h2 style="margin-bottom:20px;">📌 Статьи пользователей</h2>
+                <p style="margin-bottom:20px;">Чтобы писать и читать статьи, нужно войти в аккаунт</p>
+                <button class="btn btn-primary" onclick="showAuth()" style="margin-bottom:10px;">🔑 Войти</button>
+                <button class="btn btn-ghost" onclick="showHome()">← На главную</button>
+            </div>
+        `);
+        return;
+    }
+    if (bannedUsers.includes(currentUser.username)) {
+        frame(`<div class="ban-message">❌ ВЫ ЗАБАНЕНЫ ЗА НАРУШЕНИЯ!</div>`);
+        return;
+    }
+    const user = users.find(u => u.username === currentUser.username);
+    const gang = getGangByEmoji(user?.avatar || '😎');
+    const searchTerm = document.getElementById('articleSearch')?.value.toLowerCase() || '';
+    let filteredArticles = userArticles;
+    if (searchTerm) {
+        filteredArticles = userArticles.filter(a => 
+            a.title.toLowerCase().includes(searchTerm) || 
+            a.content.toLowerCase().includes(searchTerm)
+        );
+    }
+    filteredArticles.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    let articlesHtml = '';
+    if (filteredArticles.length === 0) {
+        articlesHtml = '<div class="empty-state"><div class="e-icon">📝</div><p>Статьи не найдены</p></div>';
+    } else {
+        articlesHtml = filteredArticles.map(article => {
+            const author = users.find(u => u.username === article.author) || { avatar: '😎', color: '#3b82f6' };
+            const authorGang = getGangByEmoji(author.avatar || '😎');
+            const isAuthor = currentUser?.username === article.author;
+            const userReaction = article.reactions?.[currentUser?.username];
+            const hasReposted = reposts[article.id]?.includes(currentUser.username);
+            return `
+                <div class="user-article">
+                    <div class="user-article-header">
+                        <div class="user-article-author" onclick="showProfile('${article.author}')">
+                            <div class="author-avatar" style="background: ${author.color || '#3b82f6'};">
+                                ${author.avatar || '😎'}
+                            </div>
+                            @${article.author}
+                            <span class="author-gang">${authorGang.split(' ')[0]}</span>
+                        </div>
+                        <span class="user-article-time">${new Date(article.timestamp).toLocaleString()}</span>
+                    </div>
+                    <div class="user-article-title" id="title-${article.id}">${article.title}</div>
+                    <div class="user-article-content" id="content-${article.id}">${article.content}</div>
+                    ${isAuthor ? `
+                        <div style="margin:10px 0; display:none;" id="edit-${article.id}">
+                            <input type="text" id="edit-title-${article.id}" class="post-title" value="${article.title}">
+                            <textarea id="edit-content-${article.id}" class="post-content">${article.content}</textarea>
+                            <button class="btn btn-primary" onclick="saveEdit('${article.id}')">Сохранить</button>
+                            <button class="btn" onclick="cancelEdit('${article.id}')">Отмена</button>
+                        </div>
+                    ` : ''}
+                    <div class="user-article-footer">
+                        <button class="reaction-btn ${userReaction === 'like' ? 'liked' : ''}" 
+                                onclick="reactToArticle('${article.id}', 'like')">
+                            👍 <span id="likes-${article.id}">${article.likes || 0}</span>
+                        </button>
+                        <button class="reaction-btn ${userReaction === 'dislike' ? 'disliked' : ''}" 
+                                onclick="reactToArticle('${article.id}', 'dislike')">
+                            👎 <span id="dislikes-${article.id}">${article.dislikes || 0}</span>
+                        </button>
+                        <button class="repost-btn ${hasReposted ? 'reposted' : ''}" 
+                                onclick="repostArticle('${article.id}')">
+                            🔄 <span id="reposts-${article.id}">${reposts[article.id]?.length || 0}</span>
+                        </button>
+                        ${isAuthor ? `
+                            <div class="article-actions">
+                                <button class="edit-btn" onclick="editArticle('${article.id}')">✏️</button>
+                                <button class="delete-btn" onclick="deleteArticle('${article.id}')">🗑️</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    const followerCount = follows[currentUser.username]?.length || 0;
+    const followingCount = user?.following?.length || 0;
+    const userPostsCount = userArticles.filter(a => a.author === currentUser.username).length;
+    frame(`
+        <div class="section-header">
+            <div class="section-title">📌 Статьи пользователей</div>
+            <button class="btn btn-ghost" onclick="showHome()">← На главную</button>
+        </div>
+        <div class="user-info">
+            <div class="user-avatar-large" style="background: ${user?.color || '#3b82f6'};" onclick="showAvatarSelector()">
+                ${user?.avatar || '😎'}
+            </div>
+            <div class="user-details">
+                <div class="user-name">
+                    @${currentUser.username}
+                    <span class="user-gang">${gang.split(' ')[0]}</span>
+                </div>
+                <div class="user-stats">
+                    <div class="stat-item" onclick="showProfile('${currentUser.username}')">
+                        <div class="stat-value">${userPostsCount}</div>
+                        <div class="stat-label">статьи</div>
+                    </div>
+                    <div class="stat-item" onclick="showFollowers('${currentUser.username}')">
+                        <div class="stat-value">${followerCount}</div>
+                        <div class="stat-label">подписчики</div>
+                    </div>
+                    <div class="stat-item" onclick="showFollowing('${currentUser.username}')">
+                        <div class="stat-value">${followingCount}</div>
+                        <div class="stat-label">подписки</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-ghost" onclick="logout()" style="margin-left: auto;">🚪</button>
+        </div>
+        <div class="post-article">
+            <h3 style="margin-bottom:15px;">📝 Написать статью</h3>
+            <input type="text" id="postTitle" class="post-title" placeholder="Заголовок">
+            <textarea id="postContent" class="post-content" placeholder="Содержание..."></textarea>
+            <button class="post-btn" onclick="publishArticle()">📢 Опубликовать</button>
+        </div>
+        <div class="search-articles">
+            <input type="text" id="articleSearch" placeholder="🔍 Поиск по статьям..." value="${searchTerm}">
+            <button onclick="showUserArticles()">Найти</button>
+        </div>
+        <div class="user-articles">${articlesHtml}</div>
+    `);
+}
+function publishArticle() {
+    const title = document.getElementById('postTitle').value.trim();
+    const content = document.getElementById('postContent').value.trim();
+    if (!title || !content) return alert('Заполните заголовок и содержание');
+    if (checkForBan(title) || checkForBan(content)) {
+        if (!bannedUsers.includes(currentUser.username)) {
+            bannedUsers.push(currentUser.username);
+            saveUsers();
+            alert('❌ ВЫ ЗАБАНЕНЫ за использование запрещённых слов!');
+            logout();
+        }
+        return;
+    }
+    const newArticle = {
+        id: Date.now().toString(),
+        author: currentUser.username,
+        title,
+        content,
+        timestamp: new Date().toISOString(),
+        likes: 0,
+        dislikes: 0,
+        reactions: {}
+    };
+    userArticles.push(newArticle);
+    saveUserArticles();
+    addXP(30, 15, 1);
+    alert('✨ Статья опубликована! +30 XP, +15 🪙, +1 💸');
+    showUserArticles();
+}
+function reactToArticle(articleId, type) {
+    if (!currentUser) return showAuth();
+    const article = userArticles.find(a => a.id === articleId);
+    if (!article) return;
+    if (!article.reactions) article.reactions = {};
+    const prevReaction = article.reactions[currentUser.username];
+    if (prevReaction === type) {
+        delete article.reactions[currentUser.username];
+        if (type === 'like') article.likes = (article.likes || 0) - 1;
+        else article.dislikes = (article.dislikes || 0) - 1;
+    } else {
+        if (prevReaction === 'like') article.likes = (article.likes || 0) - 1;
+        if (prevReaction === 'dislike') article.dislikes = (article.dislikes || 0) - 1;
+        article.reactions[currentUser.username] = type;
+        if (type === 'like') article.likes = (article.likes || 0) + 1;
+        else article.dislikes = (article.dislikes || 0) + 1;
+    }
+    saveUserArticles();
+    showUserArticles();
+}
+function repostArticle(articleId) {
+    if (!currentUser) return showAuth();
+    if (!reposts[articleId]) reposts[articleId] = [];
+    const index = reposts[articleId].indexOf(currentUser.username);
+    if (index === -1) reposts[articleId].push(currentUser.username);
+    else reposts[articleId].splice(index, 1);
+    saveUsers();
+    showUserArticles();
+}
+function editArticle(articleId) {
+    document.getElementById(`title-${articleId}`).style.display = 'none';
+    document.getElementById(`content-${articleId}`).style.display = 'none';
+    document.getElementById(`edit-${articleId}`).style.display = 'block';
+}
+function cancelEdit(articleId) {
+    document.getElementById(`title-${articleId}`).style.display = 'block';
+    document.getElementById(`content-${articleId}`).style.display = 'block';
+    document.getElementById(`edit-${articleId}`).style.display = 'none';
+}
+function saveEdit(articleId) {
+    const newTitle = document.getElementById(`edit-title-${articleId}`).value.trim();
+    const newContent = document.getElementById(`edit-content-${articleId}`).value.trim();
+    if (!newTitle || !newContent) return alert('Заполните все поля');
+    if (checkForBan(newTitle) || checkForBan(newContent)) {
+        if (!bannedUsers.includes(currentUser.username)) {
+            bannedUsers.push(currentUser.username);
+            saveUsers();
+            alert('❌ ВЫ ЗАБАНЕНЫ за использование запрещённых слов!');
+            logout();
+        }
+        return;
+    }
+    const article = userArticles.find(a => a.id === articleId);
+    if (article) {
+        article.title = newTitle;
+        article.content = newContent;
+        saveUserArticles();
+    }
+    showUserArticles();
+}
+function deleteArticle(articleId) {
+    if (!confirm('Точно удалить статью?')) return;
+    userArticles = userArticles.filter(a => a.id !== articleId);
+    saveUserArticles();
+    showUserArticles();
+}
+function loadArticle(articleId) {
+    const article = userArticles.find(a => a.id === articleId);
+    if (!article) return;
+    frame(`
+        <div style="margin-bottom:20px;"><button class="btn" onclick="showUserArticles()">← Назад</button></div>
+        <div class="user-article">
+            <div class="user-article-header">
+                <div class="user-article-author" onclick="showProfile('${article.author}')">
+                    @${article.author}
+                </div>
+                <span class="user-article-time">${new Date(article.timestamp).toLocaleString()}</span>
+            </div>
+            <div class="user-article-title">${article.title}</div>
+            <div class="user-article-content">${article.content}</div>
+        </div>
+    `);
+}
+let player = {
+    level: 1,
+    xp: 0,
+    coins: 50,
+    shik: 0,
+    inventory: []
+};
+const XP_PER_LEVEL = 200;
+const DAILY_QUESTS = [
+    { id: 'read', name: '📖 Читатель', desc: 'Прочитать 3 статьи', target: 3, type: 'article', rewardXP: 50, rewardCoins: 20, rewardShik: 1 },
+    { id: 'like', name: '👍 Лайкер', desc: 'Поставить 2 лайка', target: 2, type: 'like', rewardXP: 30, rewardCoins: 15, rewardShik: 1 },
+    { id: 'bookmark', name: '🔖 Коллекционер', desc: 'Добавить 2 статьи в закладки', target: 2, type: 'bookmark', rewardXP: 40, rewardCoins: 25, rewardShik: 1 },
+    { id: 'search', name: '🔍 Исследователь', desc: 'Выполнить 3 поиска', target: 3, type: 'search', rewardXP: 20, rewardCoins: 10, rewardShik: 0 },
+    { id: 'game', name: '🎮 Игрок', desc: 'Сыграть в 1 игру', target: 1, type: 'game', rewardXP: 60, rewardCoins: 30, rewardShik: 2 }
+];
+let questProgress = JSON.parse(localStorage.getItem('questProg')) || {};
+DAILY_QUESTS.forEach(q => { if (questProgress[q.id] === undefined) questProgress[q.id] = 0; });
+let lastQuestReset = localStorage.getItem('lastQuestReset') || Date.now();
+if (Date.now() - lastQuestReset > 86400000) {
+    questProgress = {};
+    DAILY_QUESTS.forEach(q => questProgress[q.id] = 0);
+    localStorage.setItem('lastQuestReset', Date.now());
+}
+function loadPlayer() {
+    try {
+        const saved = JSON.parse(localStorage.getItem('wikiPlayer'));
+        if (saved) {
+            player = saved;
+            if (!player.inventory) player.inventory = [];
+            if (player.shik === undefined) player.shik = 0;
+        }
+    } catch (e) {}
+    if (currentUser) {
+        currentUser.level = player.level;
+        currentUser.xp = player.xp;
+        currentUser.coins = player.coins;
+        currentUser.shik = player.shik;
+        saveCurrentUser();
+    }
+    updatePlayerUI();
+}
+function savePlayer() {
+    localStorage.setItem('wikiPlayer', JSON.stringify(player));
+    if (currentUser) {
+        currentUser.level = player.level;
+        currentUser.xp = player.xp;
+        currentUser.coins = player.coins;
+        currentUser.shik = player.shik;
+        saveCurrentUser();
+    }
+    updatePlayerUI();
+}
+function updatePlayerUI() {
+    document.getElementById('levelDisplay').innerText = player.level;
+    document.getElementById('xpDisplay').innerText = player.xp;
+    document.getElementById('coinDisplay').innerText = player.coins;
+    document.getElementById('shikDisplay').innerText = player.shik;
+    const xpInLevel = player.xp % XP_PER_LEVEL;
+    const percent = (xpInLevel / XP_PER_LEVEL) * 100;
+    document.getElementById('xpFill').style.width = percent + '%';
+}
+function addXP(amount, coinAmount = 0, shikAmount = 0) {
+    player.xp += amount;
+    player.coins += coinAmount;
+    player.shik += shikAmount;
+    while (player.xp >= player.level * XP_PER_LEVEL) {
+        player.level++;
+        player.coins += 50;
+        player.shik += 1;
+        alert(`✨ Уровень повышен! Достигнут ${player.level} уровень. +50 🪙, +1 💸!`);
+    }
+    savePlayer();
+}
+function progressQuest(type, inc = 1) {
+    DAILY_QUESTS.forEach(q => {
+        if (q.type === type && questProgress[q.id] < q.target) {
+            questProgress[q.id] = Math.min(q.target, questProgress[q.id] + inc);
+            if (questProgress[q.id] === q.target) {
+                addXP(q.rewardXP, q.rewardCoins, q.rewardShik);
+                alert(`🎉 Задание "${q.name}" выполнено! +${q.rewardXP} XP, +${q.rewardCoins} 🪙, +${q.rewardShik} 💸.`);
+            }
+        }
+    });
+    localStorage.setItem('questProg', JSON.stringify(questProgress));
+}
+let history = JSON.parse(localStorage.getItem('wh3') || '[]');
+let bookmarks = JSON.parse(localStorage.getItem('wb3') || '[]');
+let ratings = JSON.parse(localStorage.getItem('wr3') || '{}');
+let lang = localStorage.getItem('wlang') || 'ru';
+let theme = localStorage.getItem('wtheme') || 'light';
+let fontScale = parseFloat(localStorage.getItem('wfont') || '1');
+let currentArticle = '';
+let lastQuery = '';
+let currentGame = null;
+let gameScore = 0;
+let gameQuestions = [];
+let currentQuestionIndex = 0;
+let gameTimer = null;
+let calcDisplay = '0';
+let calcMemory = 0;
+let calcHistory = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+let lastResult = '';
+let waitingForSecondNumber = false;
+let speechSynthesis = window.speechSynthesis;
+let speechUtterance = null;
+let isSpeaking = false;
+let calcMode = 'basic'; // 'basic' or 'scientific'
+function exportArticleToTxt() {
+    if (!currentArticle) return alert('Сначала откройте статью для экспорта');
+    const contentDiv = document.getElementById('articleContent');
+    if (!contentDiv) return alert('Содержимое статьи не найдено');
+    const articleTitle = currentArticle;
+    const articleText = contentDiv.innerText || contentDiv.textContent;
+    const date = new Date().toLocaleString();
+    const header = `=== ${articleTitle} ===\nДата экспорта: ${date}\nЯзык: ${lang}\nИсточник: https://${lang}.wikipedia.org/wiki/${encodeURIComponent(articleTitle)}\n\n`;
+    const footer = `\n\n--- Экспортировано из Wiki✦Read ---`;
+    const content = header + articleText + footer;
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${articleTitle.replace(/[<>:"/\\|?*]/g, '_')}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    addXP(5, 2, 0);
+    alert(`📁 Статья экспортирована в TXT!\n+5 XP, +2 🪙`);
+}
+let stopwatchInterval = null;
+let stopwatchTime = 0;
+let stopwatchRunning = false;
+let stopwatchLaps = [];
+let timerInterval = null;
+let timerTime = 0;
+let timerRunning = false;
+let timerDuration = 0;
+function formatTime(seconds) {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+function showTimerPage() {
+    stopSpeech();
+    setTopic('default');
+    frame(`
+        <div class="section-header">
+            <div class="section-title">⏱️ Таймеры</div>
+            <button class="btn btn-ghost" onclick="showHome()">← На главную</button>
+        </div>
+        <div class="timer-container">
+            <div class="timer-card">
+                <h2>Секундомер</h2>
+                <div class="timer-display" id="stopwatchDisplay">00:00:00</div>
+                <div class="timer-controls">
+                    <button class="btn btn-success" onclick="stopwatchStart()" id="stopwatchStartBtn">Старт</button>
+                    <button class="btn btn-warning" onclick="stopwatchPause()" id="stopwatchPauseBtn" disabled>Пауза</button>
+                    <button class="btn btn-ghost" onclick="stopwatchReset()">Сброс</button>
+                    <button class="btn btn-primary" onclick="stopwatchLap()" id="stopwatchLapBtn" disabled>Круг</button>
+                </div>
+                <div class="lap-list" id="stopwatchLaps"></div>
+            </div>
+            <div class="timer-card">
+                <h2>Таймер</h2>
+                <input type="number" id="timerInput" class="timer-input" placeholder="Секунды" min="1" value="60">
+                <div class="timer-display" id="timerDisplay">00:01:00</div>
+                <div class="timer-controls">
+                    <button class="btn btn-success" onclick="timerStart()" id="timerStartBtn">Старт</button>
+                    <button class="btn btn-warning" onclick="timerPause()" id="timerPauseBtn" disabled>Пауза</button>
+                    <button class="btn btn-ghost" onclick="timerReset()">Сброс</button>
+                </div>
+            </div>
+        </div>
+    `);
+    stopwatchReset();
+    timerReset();
+}
+function stopwatchStart() {
+    if (stopwatchRunning) return;
+    stopwatchRunning = true;
+    document.getElementById('stopwatchStartBtn').disabled = true;
+    document.getElementById('stopwatchPauseBtn').disabled = false;
+    document.getElementById('stopwatchLapBtn').disabled = false;
+    const startTime = Date.now() - stopwatchTime * 1000;
+    stopwatchInterval = setInterval(() => {
+        stopwatchTime = Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById('stopwatchDisplay').textContent = formatTime(stopwatchTime);
+    }, 100);
+}
+function stopwatchPause() {
+    if (!stopwatchRunning) return;
+    stopwatchRunning = false;
+    clearInterval(stopwatchInterval);
+    document.getElementById('stopwatchStartBtn').disabled = false;
+    document.getElementById('stopwatchPauseBtn').disabled = true;
+    document.getElementById('stopwatchLapBtn').disabled = true;
+}
+function stopwatchReset() {
+    stopwatchPause();
+    stopwatchTime = 0;
+    stopwatchLaps = [];
+    document.getElementById('stopwatchDisplay').textContent = formatTime(0);
+    document.getElementById('stopwatchLaps').innerHTML = '';
+}
+function stopwatchLap() {
+    if (!stopwatchRunning) return;
+    stopwatchLaps.push(stopwatchTime);
+    const lapsHtml = stopwatchLaps.map((lap, index) => 
+        `<div class="lap-item">Круг ${index + 1}: ${formatTime(lap)}</div>`
+    ).join('');
+    document.getElementById('stopwatchLaps').innerHTML = lapsHtml;
+}
+function timerStart() {
+    if (timerRunning) return;
+    const input = document.getElementById('timerInput');
+    if (!timerDuration) {
+        timerDuration = parseInt(input.value) || 60;
+        timerTime = timerDuration;
+    }
+    if (timerTime <= 0) {
+        timerReset();
+        return;
+    }
+    timerRunning = true;
+    document.getElementById('timerStartBtn').disabled = true;
+    document.getElementById('timerPauseBtn').disabled = false;
+    input.disabled = true;
+    const endTime = Date.now() + timerTime * 1000;
+    timerInterval = setInterval(() => {
+        timerTime = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+        document.getElementById('timerDisplay').textContent = formatTime(timerTime);
+        if (timerTime <= 0) timerComplete();
+    }, 100);
+}
+function timerPause() {
+    if (!timerRunning) return;
+    timerRunning = false;
+    clearInterval(timerInterval);
+    document.getElementById('timerStartBtn').disabled = false;
+    document.getElementById('timerPauseBtn').disabled = true;
+}
+function timerReset() {
+    timerPause();
+    const input = document.getElementById('timerInput');
+    timerDuration = 0;
+    timerTime = parseInt(input.value) || 60;
+    document.getElementById('timerDisplay').textContent = formatTime(timerTime);
+    input.disabled = false;
+}
+function timerComplete() {
+    timerPause();
+    alert('⏰ Таймер завершён!');
+    timerReset();
+}
+function showShop() {
+    stopSpeech();
+    setTopic('default');
+    frame(`
+        <div class="section-header">
+            <div class="section-title">🏪 Магазин 💸</div>
+            <button class="btn btn-ghost" onclick="showHome()">← На главную</button>
+        </div>
+        <p style="text-align:center; margin-bottom:20px;">1 💸 = 100 🪙. Самая редкая валюта!</p>
+        <div class="shop-grid">
+            <div class="shop-card">
+                <div class="shop-icon">💸</div>
+                <div class="shop-title">Купить Coinshik</div>
+                <div class="shop-price">5 💸</div>
+                <div class="shop-desc">Поддержи разработчика и получи редкую валюту!</div>
+                <button class="btn btn-primary" onclick="buyShik()">Купить за донат</button>
+            </div>
+            <div class="shop-card">
+                <div class="shop-icon">🪙</div>
+                <div class="shop-title">Обменять монеты</div>
+                <div class="shop-price">100 🪙 → 1 💸</div>
+                <div class="shop-desc">Обменяй обычные монеты на шики</div>
+                <button class="btn btn-primary" onclick="exchangeCoins()">Обменять</button>
+            </div>
+            <div class="shop-card">
+                <div class="shop-icon">🎁</div>
+                <div class="shop-title">Секретный набор</div>
+                <div class="shop-price">10 💸</div>
+                <div class="shop-desc">Рандомный бонус (скоро)</div>
+                <button class="btn btn-ghost" disabled>В разработке</button>
+            </div>
+        </div>
+        <div style="margin-top:30px; padding:20px; background:var(--surface2); border-radius:24px; text-align:center;">
+            <h3>Как получить 💸?</h3>
+            <p>1. Выполняй ежедневные задания<br>2. Повышай уровень<br>3. <strong>Поддержи проект:</strong></p>
+            <a href="https://www.donationalerts.com/r/truststars" target="_blank" class="btn btn-primary" style="display:inline-block; margin:10px auto; text-decoration:none;">💸 Донатить сюда</a>
+            <p style="margin-top:10px;">После доната напиши @revos9 в Telegram для выдачи шиков!</p>
+        </div>
+    `);
+}
+function buyShik() {
+    window.open('https://www.donationalerts.com/r/truststars', '_blank');
+    setTimeout(() => {
+        alert('После доната свяжись с @revos9 в Telegram и укажи сумму для начисления 💸!');
+    }, 500);
+}
+function exchangeCoins() {
+    if (player.coins >= 100) {
+        player.coins -= 100;
+        player.shik += 1;
+        savePlayer();
+        alert('Обмен успешен! 100 🪙 → 1 💸');
+    } else {
+        alert('Недостаточно монет 🪙. Нужно 100.');
+    }
+}
+function updateLangUI(selectedLang) {
+    document.querySelectorAll('.lang-chip').forEach(chip => {
+        chip.classList.remove('active');
+        if (chip.dataset.lang === selectedLang) chip.classList.add('active');
+    });
+    document.getElementById('langSelectBig').value = selectedLang;
+}
+updateLangUI(lang);
+document.getElementById('fontRange').value = fontScale;
+applyFontScale(fontScale);
+applyTheme(theme);
+loadPlayer();
+showHome();
+document.getElementById('searchInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') searchWiki();
+});
+document.querySelectorAll('.lang-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+        const newLang = chip.dataset.lang;
+        setLang(newLang);
+        updateLangUI(newLang);
+    });
+});
+function toggleTheme() {
+    theme = theme === 'light' ? 'dark' : 'light';
+    localStorage.setItem('wtheme', theme);
+    applyTheme(theme);
+}
+function applyTheme(t) {
+    document.body.classList.toggle('dark', t === 'dark');
+    document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+}
+function setLang(v) { 
+    lang = v; 
+    localStorage.setItem('wlang', v);
+    updateLangUI(v);
+}
+function setFontScale(v) {
+    fontScale = parseFloat(v);
+    localStorage.setItem('wfont', v);
+    applyFontScale(v);
+}
+function applyFontScale(v) {
+    document.documentElement.style.setProperty('--font-scale', v);
+}
+const TOPICS = {
+    tech:    ['технологи','программ','компьютер','интернет','software','computer','technology','ai','robot','electron','digital'],
+    nature:  ['природ','животн','растени','ecology','nature','animal','plant','forest','ocean','биолог'],
+    history: ['история','война','революц','history','war','empire','dynasty','ancient','medieval','средневек','империя'],
+    art:     ['искусств','живопис','музык','литератур','art','music','painting','film','cinema','поэзи','театр'],
+    science: ['физик','химия','математик','астроном','physics','chemistry','mathematics','quantum','atom','наука'],
+    sport:   ['спорт','футбол','баскетбол','sport','football','basketball','olympic','чемпионат','олимп'],
+    geo:     ['географ','страна','город','continent','country','city','geography','ocean','mountain','река','гора'],
+};
+const TOPIC_EMOJI  = { tech:'💻', nature:'🌿', history:'🏛️', art:'🎨', science:'🔬', sport:'⚽', geo:'🌍', default:'📄' };
+const TOPIC_LABEL  = { tech:'Технологии', nature:'Природа', history:'История', art:'Искусство', science:'Наука', sport:'Спорт', geo:'География', default:'Статья' };
+function detectTopic(title) {
+    const lower = title.toLowerCase();
+    for (const [topic, keys] of Object.entries(TOPICS)) {
+        if (keys.some(k => lower.includes(k))) return topic;
+    }
+    return 'default';
+}
+function setTopic(topic) { document.body.setAttribute('data-topic', topic || 'default'); }
+function saveHistory() { localStorage.setItem('wh3', JSON.stringify(history)); }
+function saveBookmarks() { localStorage.setItem('wb3', JSON.stringify(bookmarks)); }
+function saveRatings() { localStorage.setItem('wr3', JSON.stringify(ratings)); }
+function addToHistory(title, type) {
+    history = history.filter(i => i.title !== title);
+    history.unshift({ title, type, lang, date: new Date().toLocaleString(), ts: Date.now() });
+    if (history.length > 30) history = history.slice(0, 30);
+    saveHistory();
+}
+function isBookmarked(title) { return bookmarks.some(b => b.title === title && b.lang === lang); }
+function toggleBookmark(title) {
+    if (isBookmarked(title)) {
+        bookmarks = bookmarks.filter(b => !(b.title === title && b.lang === lang));
+    } else {
+        bookmarks.unshift({ title, lang, date: new Date().toLocaleString() });
+        progressQuest('bookmark');
+        addXP(10, 5, 0);
+    }
+    saveBookmarks();
+}
+function frame(html) { document.getElementById('frame').innerHTML = html; }
+function showSkeleton() {
+    frame(`
+        <div class="skeleton" style="width:35%;height:20px;margin-bottom:10px;"></div>
+        <div class="skeleton" style="width:65%;height:32px;margin-bottom:20px;"></div>
+        <div class="skeleton" style="width:100%;height:200px;margin-bottom:20px;"></div>
+        <div class="skeleton" style="width:100%;"></div>
+        <div class="skeleton" style="width:97%;"></div>
+        <div class="skeleton" style="width:88%;"></div>
+        <div class="skeleton" style="width:93%;margin-bottom:20px;"></div>
+        <div class="skeleton" style="width:100%;"></div>
+        <div class="skeleton" style="width:80%;"></div>
+        <div class="skeleton" style="width:76%;"></div>
+    `);
+}
+function showHome() {
+    setTopic('default');
+    let welcomeMessage = '';
+    let loginButton = '';
+    if (currentUser) {
+        welcomeMessage = `<p style="margin-bottom:15px;">👋 Добро пожаловать, <strong>@${currentUser.username}</strong>!</p>`;
+        loginButton = '';
+    } else {
+        welcomeMessage = '';
+        loginButton = '<button class="btn btn-ghost" onclick="showAuth()">🔑 Войти / Регистрация</button>';
+    }
+    frame(`
+        <div class="home-hero">
+            <div class="big-icon">📖</div>
+            <h2>Добро пожаловать в Wiki✦Read</h2>
+            ${welcomeMessage}
+            <p>Красивый способ читать полные статьи Википедии с картинками.<br>Ищи, сохраняй закладки и зарабатывай 💸!</p>
+            <div class="home-actions">
+                <button class="btn btn-primary" onclick="randomArticle()">🎲 Случайная статья</button>
+                <button class="btn btn-ghost" onclick="showUserArticles()">📌 Статьи пользователей</button>
+                ${loginButton}
+            </div>
+        </div>
+        <div class="section-label">🎨 Тема интерфейса по категории</div>
+        <div class="topic-grid">
+            <span class="topic-chip" onclick="setTopic('tech')">💻 Технологии</span>
+            <span class="topic-chip" onclick="setTopic('nature')">🌿 Природа</span>
+            <span class="topic-chip" onclick="setTopic('history')">🏛️ История</span>
+            <span class="topic-chip" onclick="setTopic('art')">🎨 Искусство</span>
+            <span class="topic-chip" onclick="setTopic('science')">🔬 Наука</span>
+            <span class="topic-chip" onclick="setTopic('sport')">⚽ Спорт</span>
+            <span class="topic-chip" onclick="setTopic('geo')">🌍 География</span>
+        </div>
+    `);
+}
+function showQuests() {
+    setTopic('default');
+    let questHtml = '';
+    DAILY_QUESTS.forEach(q => {
+        const prog = questProgress[q.id] || 0;
+        const percent = (prog / q.target) * 100;
+        questHtml += `<div class="quest-card">
+            <div style="font-size:18px;">${q.name}</div>
+            <div>${q.desc}</div>
+            <div class="quest-progress"><div class="quest-bar" style="width:${percent}%"></div></div>
+            <div>${prog}/${q.target}  |  награда: +${q.rewardXP} XP, 🪙 ${q.rewardCoins}, 💸 ${q.rewardShik}</div>
+        </div>`;
+    });
+    frame(`
+        <div class="section-header">
+            <div class="section-title">📋 Ежедневные задания</div>
+            <button class="btn btn-ghost" onclick="showHome()">← На главную</button>
+        </div>
+        <div class="quest-grid">${questHtml}</div>
+    `);
+}
+function showGamesHub() {
+    setTopic('default');
+    frame(`
+        <div class="section-header">
+            <div class="section-title">🎮 Игры</div>
+            <button class="btn btn-ghost" onclick="showHome()">← На главную</button>
+        </div>
+        <div class="games-grid">
+            <div class="game-card" onclick="startGame('guessImage')">
+                <div class="game-icon">🖼️</div>
+                <div class="game-title">Угадай статью</div>
+                <div class="game-desc">Угадай статью по картинке</div>
+            </div>
+            <div class="game-card" onclick="startGame('factPuzzle')">
+                <div class="game-icon">🧩</div>
+                <div class="game-title">Собери пазл</div>
+                <div class="game-desc">Собери пазл из фактов</div>
+            </div>
+            <div class="game-card" onclick="startGame('truthOrMyth')">
+                <div class="game-icon">🤔</div>
+                <div class="game-title">Правда или миф?</div>
+                <div class="game-desc">Квиз по мотивам статей</div>
+            </div>
+            <div class="game-card" onclick="startGame('titleBattle')">
+                <div class="game-icon">⚔️</div>
+                <div class="game-title">Битва заголовков</div>
+                <div class="game-desc">Выбери правильное название</div>
+            </div>
+        </div>
+    `);
+}
+function startGame(gameType) {
+    stopSpeech();
+    setTopic('default');
+    showSkeleton();
+    currentGame = gameType;
+    gameScore = 0;
+    currentQuestionIndex = 0;
+    gameQuestions = [];
+    fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=10&format=json&origin=*`)
+        .then(r => r.json())
+        .then(data => {
+            const titles = data.query.random.map(r => r.title);
+            return Promise.all(titles.map(title => 
+                fetch(`https://${lang}.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(title)}&format=json&origin=*&prop=text|images|displaytitle`)
+                    .then(r => r.json())
+                    .catch(() => null)
+            ));
+        })
+        .then(results => {
+            gameQuestions = results.filter(r => r && r.parse).map(r => ({
+                title: r.parse.title,
+                text: r.parse.text['*'],
+                images: r.parse.images || []
+            }));
+            if (gameQuestions.length < 3) {
+                frame(`<div class="empty-state">
+                    <div class="e-icon">😕</div>
+                    <p>Не удалось загрузить достаточно статей для игры. Попробуйте ещё раз.</p>
+                    <button class="btn btn-primary" onclick="showGamesHub()">← К играм</button>
+                </div>`);
+                return;
+            }
+            switch(gameType) {
+                case 'guessImage': renderGuessImage(); break;
+                case 'factPuzzle': renderFactPuzzle(); break;
+                case 'truthOrMyth': renderTruthOrMyth(); break;
+                case 'titleBattle': renderTitleBattle(); break;
+                default: showGamesHub();
+            }
+        })
+        .catch(() => {
+            frame(`<div class="empty-state">
+                <div class="e-icon">⚠️</div>
+                <p>Ошибка загрузки игр. Проверьте подключение.</p>
+                <button class="btn btn-primary" onclick="showGamesHub()">← Назад</button>
+            </div>`);
+        });
+}
+function renderGuessImage() {
+    if (currentQuestionIndex >= gameQuestions.length) return endGame();
+    const q = gameQuestions[currentQuestionIndex];
+    const tmp = document.createElement('div');
+    tmp.innerHTML = q.text;
+    let imgSrc = null;
+    const imgEl = tmp.querySelector('img');
+    if (imgEl && imgEl.src) {
+        imgSrc = imgEl.src;
+        if (imgSrc.startsWith('//')) imgSrc = 'https:' + imgSrc;
+    }
+    if (!imgSrc) {
+        currentQuestionIndex++;
+        renderGuessImage();
+        return;
+    }
+    const wrongOptions = gameQuestions
+        .filter((_, i) => i !== currentQuestionIndex)
+        .map(q => q.title)
+        .slice(0, 3);
+    const options = [q.title, ...wrongOptions].sort(() => Math.random() - 0.5);
+    frame(`
+        <div class="section-header">
+            <div class="section-title">🖼️ Угадай статью по картинке</div>
+            <div class="section-title">${currentQuestionIndex + 1}/${gameQuestions.length}</div>
+        </div>
+        <div class="game-progress">
+            <div class="game-progress-bar" style="width: ${(currentQuestionIndex / gameQuestions.length) * 100}%"></div>
+        </div>
+        <div class="game-stats">
+            <span>🎯 Счёт: ${gameScore}</span>
+        </div>
+        <img src="${imgSrc}" class="guess-image" onclick="showImageModal('${imgSrc}')">
+        <div class="options-grid" id="gameOptions">
+            ${options.map(opt => `<button class="option-btn" onclick="checkGuess('${opt.replace(/'/g, "\\'")}', '${q.title.replace(/'/g, "\\'")}')">${opt}</button>`).join('')}
+        </div>
+        <div style="text-align:center; margin-top:20px;">
+            <button class="btn btn-ghost" onclick="endGame()">🚪 Завершить игру</button>
+        </div>
+    `);
+}
+function checkGuess(selected, correct) {
+    const btns = document.querySelectorAll('.option-btn');
+    btns.forEach(btn => btn.disabled = true);
+    if (selected === correct) {
+        gameScore++;
+        event.target.classList.add('correct');
+    } else {
+        event.target.classList.add('wrong');
+        btns.forEach(btn => {
+            if (btn.textContent === correct) btn.classList.add('correct');
+        });
+    }
+    setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < gameQuestions.length) renderGuessImage();
+        else endGame();
+    }, 1500);
+}
+function renderFactPuzzle() {
+    if (currentQuestionIndex >= gameQuestions.length - 1) return endGame();
+    const q1 = gameQuestions[currentQuestionIndex];
+    const q2 = gameQuestions[currentQuestionIndex + 1];
+    const extractFact = (article, maxLength = 200) => {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = article.text;
+        const paragraphs = tmp.querySelectorAll('p');
+        for (let p of paragraphs) {
+            const text = p.textContent.trim();
+            if (text.length > 50 && text.length < maxLength && !text.includes('[')) return text;
+        }
+        return `${article.title} — интересная статья на Википедии`;
+    };
+    const fact1 = extractFact(q1);
+    const fact2 = extractFact(q2);
+    const pieces = [
+        { fact: fact1, article: q1.title, id: 1 },
+        { fact: fact2, article: q2.title, id: 2 }
+    ].sort(() => Math.random() - 0.5);
+    frame(`
+        <div class="section-header">
+            <div class="section-title">🧩 Собери пазл из фактов</div>
+            <div class="section-title">${currentQuestionIndex + 1}/${gameQuestions.length - 1}</div>
+        </div>
+        <div class="game-progress">
+            <div class="game-progress-bar" style="width: ${(currentQuestionIndex / (gameQuestions.length - 1)) * 100}%"></div>
+        </div>
+        <div class="game-stats">
+            <span>🎯 Счёт: ${gameScore}</span>
+        </div>
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:250px;">
+                <h3>Факты:</h3>
+                <div class="fact-puzzle">
+                    ${pieces.map((p, i) => `<div class="fact-piece" onclick="selectFact(${i}, '${p.article.replace(/'/g, "\\'")}')" data-fact-id="${i}">${p.fact}</div>`).join('')}
+                </div>
+            </div>
+            <div style="flex:1; min-width:250px;">
+                <h3>Статьи:</h3>
+                <div class="fact-puzzle">
+                    <div class="fact-piece" onclick="selectArticle(0, '${q1.title.replace(/'/g, "\\'")}')" data-article-id="0">📄 ${q1.title}</div>
+                    <div class="fact-piece" onclick="selectArticle(1, '${q2.title.replace(/'/g, "\\'")}')" data-article-id="1">📄 ${q2.title}</div>
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center; margin:20px 0;">
+            <button class="btn btn-primary" onclick="checkFactMatch()" id="checkMatchBtn" disabled>✅ Проверить</button>
+        </div>
+        <div style="text-align:center;">
+            <button class="btn btn-ghost" onclick="endGame()">🚪 Завершить игру</button>
+        </div>
+    `);
+    window.selectedFact = null;
+    window.selectedArticle = null;
+    window.selectedFactTitle = null;
+    window.selectedArticleTitle = null;
+}
+function selectFact(index, articleTitle) {
+    document.querySelectorAll('.fact-piece[data-fact-id]').forEach(el => el.classList.remove('selected'));
+    event.target.classList.add('selected');
+    window.selectedFact = index;
+    window.selectedFactTitle = articleTitle;
+    updateCheckButton();
+}
+function selectArticle(index, articleTitle) {
+    document.querySelectorAll('.fact-piece[data-article-id]').forEach(el => el.classList.remove('selected'));
+    event.target.classList.add('selected');
+    window.selectedArticle = index;
+    window.selectedArticleTitle = articleTitle;
+    updateCheckButton();
+}
+function updateCheckButton() {
+    const btn = document.getElementById('checkMatchBtn');
+    if (window.selectedFact !== null && window.selectedArticle !== null) btn.disabled = false;
+}
+function checkFactMatch() {
+    if (window.selectedFactTitle === window.selectedArticleTitle) {
+        gameScore++;
+        document.querySelectorAll('.fact-piece.selected').forEach(el => el.classList.add('correct'));
+    } else {
+        document.querySelectorAll('.fact-piece.selected').forEach(el => el.classList.add('wrong'));
+    }
+    document.getElementById('checkMatchBtn').disabled = true;
+    setTimeout(() => {
+        currentQuestionIndex += 2;
+        if (currentQuestionIndex < gameQuestions.length - 1) renderFactPuzzle();
+        else endGame();
+    }, 1500);
+}
+function renderTruthOrMyth() {
+    if (currentQuestionIndex >= gameQuestions.length) return endGame();
+    const q = gameQuestions[currentQuestionIndex];
+    const tmp = document.createElement('div');
+    tmp.innerHTML = q.text;
+    const paragraphs = tmp.querySelectorAll('p');
+    let fact = '';
+    for (let p of paragraphs) {
+        fact = p.textContent.trim();
+        if (fact.length > 30 && fact.length < 150 && !fact.includes('[')) break;
+    }
+    if (!fact) fact = `${q.title} — статья на Википедии`;
+    const isTruth = Math.random() > 0.5;
+    const mythFact = isTruth ? fact : `На самом деле ${fact.split(' ').slice(0, 5).join(' ')}... — это распространённый миф.`;
+    frame(`
+        <div class="section-header">
+            <div class="section-title">🤔 Правда или миф?</div>
+            <div class="section-title">${currentQuestionIndex + 1}/${gameQuestions.length}</div>
+        </div>
+        <div class="game-progress">
+            <div class="game-progress-bar" style="width: ${(currentQuestionIndex / gameQuestions.length) * 100}%"></div>
+        </div>
+        <div class="game-stats">
+            <span>🎯 Счёт: ${gameScore}</span>
+        </div>
+        <div style="background:var(--surface2); padding:25px; border-radius:20px; margin:20px 0; font-size:18px; border:2px solid var(--border);">
+            "${mythFact}"
+        </div>
+        <div class="options-grid">
+            <button class="option-btn" onclick="checkTruthMyth(true, ${isTruth})">✅ Правда</button>
+            <button class="option-btn" onclick="checkTruthMyth(false, ${isTruth})">❌ Миф</button>
+        </div>
+        <div style="text-align:center; margin-top:20px;">
+            <button class="btn btn-ghost" onclick="endGame()">🚪 Завершить игру</button>
+        </div>
+    `);
+}
+function checkTruthMyth(selected, isTruth) {
+    const btns = document.querySelectorAll('.option-btn');
+    btns.forEach(btn => btn.disabled = true);
+    if (selected === isTruth) {
+        gameScore++;
+        event.target.classList.add('correct');
+    } else {
+        event.target.classList.add('wrong');
+        btns.forEach(btn => {
+            if ((btn.textContent === '✅ Правда' && isTruth) || (btn.textContent === '❌ Миф' && !isTruth)) btn.classList.add('correct');
+        });
+    }
+    setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < gameQuestions.length) renderTruthOrMyth();
+        else endGame();
+    }, 1500);
+}
+function renderTitleBattle() {
+    if (currentQuestionIndex >= gameQuestions.length) return endGame();
+    const q = gameQuestions[currentQuestionIndex];
+    const tmp = document.createElement('div');
+    tmp.innerHTML = q.text;
+    let description = '';
+    const paragraphs = tmp.querySelectorAll('p');
+    for (let p of paragraphs) {
+        description = p.textContent.trim();
+        if (description.length > 50 && description.length < 300) break;
+    }
+    if (!description) description = `Статья о ${q.title.toLowerCase()}`;
+    const wrongTitles = gameQuestions
+        .filter((_, i) => i !== currentQuestionIndex)
+        .map(q => q.title)
+        .slice(0, 3);
+    const options = [q.title, ...wrongTitles].sort(() => Math.random() - 0.5);
+    frame(`
+        <div class="section-header">
+            <div class="section-title">⚔️ Битва заголовков</div>
+            <div class="section-title">${currentQuestionIndex + 1}/${gameQuestions.length}</div>
+        </div>
+        <div class="game-progress">
+            <div class="game-progress-bar" style="width: ${(currentQuestionIndex / gameQuestions.length) * 100}%"></div>
+        </div>
+        <div class="game-stats">
+            <span>🎯 Счёт: ${gameScore}</span>
+        </div>
+        <div style="background:var(--surface2); padding:25px; border-radius:20px; margin:20px 0; border:2px solid var(--border);">
+            ${description}
+        </div>
+        <div class="options-grid">
+            ${options.map(opt => `<button class="option-btn" onclick="checkTitle('${opt.replace(/'/g, "\\'")}', '${q.title.replace(/'/g, "\\'")}')">${opt}</button>`).join('')}
+        </div>
+        <div style="text-align:center; margin-top:20px;">
+            <button class="btn btn-ghost" onclick="endGame()">🚪 Завершить игру</button>
+        </div>
+    `);
+}
+function checkTitle(selected, correct) {
+    const btns = document.querySelectorAll('.option-btn');
+    btns.forEach(btn => btn.disabled = true);
+    if (selected === correct) {
+        gameScore++;
+        event.target.classList.add('correct');
+    } else {
+        event.target.classList.add('wrong');
+        btns.forEach(btn => {
+            if (btn.textContent === correct) btn.classList.add('correct');
+        });
+    }
+    setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < gameQuestions.length) renderTitleBattle();
+        else endGame();
+    }, 1500);
+}
+function endGame() {
+    progressQuest('game');
+    addXP(20, 10, 1);
+    const totalQuestions = currentGame === 'factPuzzle' ? Math.floor(gameQuestions.length / 2) : gameQuestions.length;
+    const percent = Math.round((gameScore / totalQuestions) * 100);
+    let message = '';
+    if (percent >= 80) message = '🌟 Отлично! Ты настоящий эрудит!';
+    else if (percent >= 60) message = '👍 Хорошо! Но есть куда расти.';
+    else if (percent >= 40) message = '👌 Неплохо, попробуй ещё раз!';
+    else message = '💪 Попробуй снова, у тебя получится!';
+    frame(`
+        <div class="empty-state">
+            <div class="e-icon">🎮</div>
+            <h2>Игра завершена!</h2>
+            <p style="font-size: 24px; font-weight: 800; color: var(--accent);">${gameScore} / ${totalQuestions}</p>
+            <p>${message}</p>
+            <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center;">
+                <button class="btn btn-primary" onclick="startGame('${currentGame}')">🔄 Играть снова</button>
+                <button class="btn btn-ghost" onclick="showHome()">🏠 На главную</button>
+            </div>
+        </div>
+    `);
+}
+
+// КРАСИВЫЙ ИНЖЕНЕРНЫЙ КАЛЬКУЛЯТОР
+function showCalculator() {
+    setTopic('default');
+    renderCalculator();
+}
+
+function renderCalculator() {
+    const historyHtml = calcHistory.slice(-5).reverse().map(item => 
+        `<div class="calc-history-item">${item}</div>`
+    ).join('');
+    
+    const basicButtons = `
+        <div class="calc-buttons">
+            <button class="calc-btn clear" onclick="clearDisplay()">C</button>
+            <button class="calc-btn" onclick="backspace()">⌫</button>
+            <button class="calc-btn operator" onclick="addOperator('%')">%</button>
+            <button class="calc-btn operator" onclick="addOperator('/')">÷</button>
+            <button class="calc-btn" onclick="addNumber('7')">7</button>
+            <button class="calc-btn" onclick="addNumber('8')">8</button>
+            <button class="calc-btn" onclick="addNumber('9')">9</button>
+            <button class="calc-btn operator" onclick="addOperator('*')">×</button>
+            <button class="calc-btn" onclick="addNumber('4')">4</button>
+            <button class="calc-btn" onclick="addNumber('5')">5</button>
+            <button class="calc-btn" onclick="addNumber('6')">6</button>
+            <button class="calc-btn operator" onclick="addOperator('-')">−</button>
+            <button class="calc-btn" onclick="addNumber('1')">1</button>
+            <button class="calc-btn" onclick="addNumber('2')">2</button>
+            <button class="calc-btn" onclick="addNumber('3')">3</button>
+            <button class="calc-btn operator" onclick="addOperator('+')">+</button>
+            <button class="calc-btn" onclick="addNumber('0')">0</button>
+            <button class="calc-btn" onclick="addNumber('00')">00</button>
+            <button class="calc-btn" onclick="addNumber('.')">.</button>
+            <button class="calc-btn equals" onclick="calculate()">=</button>
+        </div>
+    `;
+    
+    const scientificButtons = `
+        <div class="calc-buttons">
+            <button class="calc-btn clear" onclick="clearDisplay()">C</button>
+            <button class="calc-btn" onclick="backspace()">⌫</button>
+            <button class="calc-btn function" onclick="addFunction('sin(')">sin</button>
+            <button class="calc-btn function" onclick="addFunction('cos(')">cos</button>
+            <button class="calc-btn function" onclick="addFunction('tan(')">tan</button>
+            <button class="calc-btn function" onclick="addFunction('(')">(</button>
+            
+            <button class="calc-btn function" onclick="addFunction('asin(')">asin</button>
+            <button class="calc-btn function" onclick="addFunction('acos(')">acos</button>
+            <button class="calc-btn function" onclick="addFunction('atan(')">atan</button>
+            <button class="calc-btn function" onclick="addFunction(')')">)</button>
+            <button class="calc-btn function" onclick="addConstant('π')">π</button>
+            
+            <button class="calc-btn function" onclick="addFunction('log(')">log</button>
+            <button class="calc-btn function" onclick="addFunction('ln(')">ln</button>
+            <button class="calc-btn function" onclick="addFunction('sqrt(')">√</button>
+            <button class="calc-btn function" onclick="addOperator('^')">x^y</button>
+            <button class="calc-btn function" onclick="addConstant('e')">e</button>
+            
+            <button class="calc-btn" onclick="addNumber('7')">7</button>
+            <button class="calc-btn" onclick="addNumber('8')">8</button>
+            <button class="calc-btn" onclick="addNumber('9')">9</button>
+            <button class="calc-btn operator" onclick="addOperator('/')">÷</button>
+            <button class="calc-btn function" onclick="addConstant('φ')">φ</button>
+            
+            <button class="calc-btn" onclick="addNumber('4')">4</button>
+            <button class="calc-btn" onclick="addNumber('5')">5</button>
+            <button class="calc-btn" onclick="addNumber('6')">6</button>
+            <button class="calc-btn operator" onclick="addOperator('*')">×</button>
+            <button class="calc-btn function" onclick="addFunction('abs(')">abs</button>
+            
+            <button class="calc-btn" onclick="addNumber('1')">1</button>
+            <button class="calc-btn" onclick="addNumber('2')">2</button>
+            <button class="calc-btn" onclick="addNumber('3')">3</button>
+            <button class="calc-btn operator" onclick="addOperator('-')">−</button>
+            <button class="calc-btn function" onclick="addFunction('round(')">round</button>
+            
+            <button class="calc-btn" onclick="addNumber('0')">0</button>
+            <button class="calc-btn" onclick="addNumber('00')">00</button>
+            <button class="calc-btn" onclick="addNumber('.')">.</button>
+            <button class="calc-btn operator" onclick="addOperator('+')">+</button>
+            <button class="calc-btn equals" onclick="calculate()">=</button>
+        </div>
+    `;
+    
+    frame(`
+        <div class="section-header">
+            <div class="section-title">🧮 Инженерный калькулятор</div>
+            <button class="btn btn-ghost" onclick="showHome()">← На главную</button>
+        </div>
+        <div class="calculator">
+            <div class="calc-display">
+                <div class="calc-display-small" id="calcSmallDisplay">${lastResult || ''}</div>
+                <div id="calcMainDisplay">${calcDisplay}</div>
+            </div>
+            
+            <div class="calc-mode-switch">
+                <button class="mode-btn ${calcMode === 'basic' ? 'active' : ''}" onclick="setCalcMode('basic')">🔢 Обычный</button>
+                <button class="mode-btn ${calcMode === 'scientific' ? 'active' : ''}" onclick="setCalcMode('scientific')">🔬 Инженерный</button>
+            </div>
+            
+            <div class="calc-memory">
+                <button class="memory-btn" onclick="memoryClear()">MC</button>
+                <button class="memory-btn" onclick="memoryRecall()">MR</button>
+                <button class="memory-btn" onclick="memoryAdd()">M+</button>
+                <button class="memory-btn" onclick="memorySubtract()">M-</button>
+                <button class="memory-btn" onclick="memorySave()">MS</button>
+            </div>
+            
+            <div class="const-buttons" id="constButtons">
+                <button class="const-btn" onclick="addConstant('π')">π = 3.14159</button>
+                <button class="const-btn" onclick="addConstant('e')">e = 2.71828</button>
+                <button class="const-btn" onclick="addConstant('φ')">φ = 1.618</button>
+            </div>
+            
+            <div id="calcButtons">
+                ${calcMode === 'basic' ? basicButtons : scientificButtons}
+            </div>
+            
+            <div class="calc-history">
+                <div style="font-weight:600; margin-bottom:8px;">📜 История</div>
+                ${historyHtml || '<div class="calc-history-item">Нет вычислений</div>'}
+                ${calcHistory.length > 0 ? '<button class="btn btn-ghost" style="margin-top:8px; width:100%;" onclick="clearHistory()">Очистить историю</button>' : ''}
+            </div>
+        </div>
+    `);
+}
+
+function setCalcMode(mode) {
+    calcMode = mode;
+    renderCalculator();
+}
+
+function addNumber(num) {
+    if (waitingForSecondNumber) {
+        calcDisplay = num;
+        waitingForSecondNumber = false;
+    } else {
+        calcDisplay = calcDisplay === '0' ? num : calcDisplay + num;
+    }
+    document.getElementById('calcMainDisplay').textContent = calcDisplay;
+}
+
+function addOperator(op) {
+    const lastChar = calcDisplay.slice(-1);
+    if ('+-*/%^'.includes(lastChar)) {
+        calcDisplay = calcDisplay.slice(0, -1) + op;
+    } else {
+        calcDisplay += op;
+    }
+    waitingForSecondNumber = false;
+    document.getElementById('calcMainDisplay').textContent = calcDisplay;
+}
+
+function addFunction(func) {
+    calcDisplay = calcDisplay === '0' ? func : calcDisplay + func;
+    waitingForSecondNumber = false;
+    document.getElementById('calcMainDisplay').textContent = calcDisplay;
+}
+
+function addConstant(constant) {
+    const values = {
+        'π': Math.PI,
+        'e': Math.E,
+        'φ': 1.618033988749895
+    };
+    if (waitingForSecondNumber) {
+        calcDisplay = values[constant].toString();
+        waitingForSecondNumber = false;
+    } else {
+        calcDisplay = calcDisplay === '0' ? values[constant].toString() : calcDisplay + values[constant];
+    }
+    document.getElementById('calcMainDisplay').textContent = calcDisplay;
+}
+
+function clearDisplay() {
+    calcDisplay = '0';
+    waitingForSecondNumber = false;
+    if (document.getElementById('calcMainDisplay')) {
+        document.getElementById('calcMainDisplay').textContent = calcDisplay;
+        document.getElementById('calcSmallDisplay').textContent = '';
+    }
+}
+
+function backspace() {
+    calcDisplay = calcDisplay.length > 1 ? calcDisplay.slice(0, -1) : '0';
+    document.getElementById('calcMainDisplay').textContent = calcDisplay;
+}
+
+function calculate() {
+    try {
+        let expression = calcDisplay
+            .replace(/×/g, '*')
+            .replace(/÷/g, '/')
+            .replace(/−/g, '-')
+            .replace(/\^/g, '**')
+            .replace(/π/g, Math.PI)
+            .replace(/e/g, Math.E)
+            .replace(/φ/g, 1.618033988749895);
+        
+        // Обработка функций
+        expression = expression.replace(/sin\(/g, 'Math.sin(');
+        expression = expression.replace(/cos\(/g, 'Math.cos(');
+        expression = expression.replace(/tan\(/g, 'Math.tan(');
+        expression = expression.replace(/asin\(/g, 'Math.asin(');
+        expression = expression.replace(/acos\(/g, 'Math.acos(');
+        expression = expression.replace(/atan\(/g, 'Math.atan(');
+        expression = expression.replace(/log\(/g, 'Math.log10(');
+        expression = expression.replace(/ln\(/g, 'Math.log(');
+        expression = expression.replace(/sqrt\(/g, 'Math.sqrt(');
+        expression = expression.replace(/abs\(/g, 'Math.abs(');
+        expression = expression.replace(/round\(/g, 'Math.round(');
+        
+        // Обработка процентов
+        expression = expression.replace(/(\d+)%/g, '($1/100)');
+        
+        const result = eval(expression);
+        const historyItem = `${calcDisplay} = ${result}`;
+        
+        calcHistory.push(historyItem);
+        if (calcHistory.length > 20) calcHistory.shift();
+        localStorage.setItem('calcHistory', JSON.stringify(calcHistory));
+        
+        lastResult = result;
+        calcDisplay = result.toString();
+        waitingForSecondNumber = true;
+        
+        document.getElementById('calcMainDisplay').textContent = calcDisplay;
+        document.getElementById('calcSmallDisplay').textContent = historyItem;
+        
+        // Даём немного опыта за использование калькулятора
+        addXP(1, 0, 0);
+        
+    } catch (e) {
+        document.getElementById('calcMainDisplay').textContent = 'Ошибка';
+        setTimeout(() => {
+            document.getElementById('calcMainDisplay').textContent = calcDisplay;
+        }, 1000);
+    }
+}
+
+function clearHistory() {
+    calcHistory = [];
+    localStorage.setItem('calcHistory', JSON.stringify(calcHistory));
+    renderCalculator();
+}
+
+function memoryRecall() {
+    calcDisplay = calcMemory.toString();
+    waitingForSecondNumber = false;
+    document.getElementById('calcMainDisplay').textContent = calcDisplay;
+}
+
+function memoryClear() { 
+    calcMemory = 0; 
+}
+
+function memoryAdd() {
+    try {
+        let expression = calcDisplay
+            .replace(/×/g, '*')
+            .replace(/÷/g, '/')
+            .replace(/−/g, '-')
+            .replace(/\^/g, '**')
+            .replace(/π/g, Math.PI)
+            .replace(/e/g, Math.E);
+        
+        expression = expression.replace(/sin\(/g, 'Math.sin(');
+        expression = expression.replace(/cos\(/g, 'Math.cos(');
+        expression = expression.replace(/tan\(/g, 'Math.tan(');
+        
+        calcMemory += parseFloat(eval(expression)) || 0;
+    } catch (e) {}
+}
+
+function memorySubtract() {
+    try {
+        let expression = calcDisplay
+            .replace(/×/g, '*')
+            .replace(/÷/g, '/')
+            .replace(/−/g, '-')
+            .replace(/\^/g, '**')
+            .replace(/π/g, Math.PI)
+            .replace(/e/g, Math.E);
+        
+        expression = expression.replace(/sin\(/g, 'Math.sin(');
+        expression = expression.replace(/cos\(/g, 'Math.cos(');
+        expression = expression.replace(/tan\(/g, 'Math.tan(');
+        
+        calcMemory -= parseFloat(eval(expression)) || 0;
+    } catch (e) {}
+}
+
+function memorySave() {
+    try {
+        let expression = calcDisplay
+            .replace(/×/g, '*')
+            .replace(/÷/g, '/')
+            .replace(/−/g, '-')
+            .replace(/\^/g, '**')
+            .replace(/π/g, Math.PI)
+            .replace(/e/g, Math.E);
+        
+        expression = expression.replace(/sin\(/g, 'Math.sin(');
+        expression = expression.replace(/cos\(/g, 'Math.cos(');
+        expression = expression.replace(/tan\(/g, 'Math.tan(');
+        
+        calcMemory = parseFloat(eval(expression)) || 0;
+    } catch (e) {}
+}
+
+function searchWiki() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (!q) {
+        frame('<div class="empty-state"><div class="e-icon">✏️</div><p>Введите запрос для поиска</p></div>');
+        return;
+    }
+    lastQuery = q;
+    addToHistory('Поиск: ' + q, 'search');
+    progressQuest('search');
+    showSkeleton();
+    fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&origin=*`)
+        .then(r => r.json())
+        .then(data => {
+            const results = data.query && data.query.search;
+            if (!results || !results.length) {
+                frame('<div class="empty-state"><div class="e-icon">😕</div><p>Ничего не нашлось.<br>Попробуй другой запрос.</p></div>');
+                return;
+            }
+            let html = `<div class="results-title">🔍 Результаты: «${q}»</div>`;
+            results.slice(0, 8).forEach(r => {
+                const snippet = r.snippet.replace(/<[^>]*>/g, '').substring(0, 130);
+                const safeTitle = r.title.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+                html += `<div class="result-card" onclick="loadPage('${safeTitle}')">
+                    <h3>${r.title}</h3>
+                    <p>${snippet}…</p>
+                </div>`;
+            });
+            frame(html);
+        })
+        .catch(() => frame('<div class="empty-state"><div class="e-icon">⚠️</div><p>Ошибка сети.</p></div>'));
+}
+function processArticleLinks(container) {
+    container.querySelectorAll('a').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('/wiki/')) {
+            const title = decodeURIComponent(href.replace('/wiki/', ''));
+            link.onclick = (e) => {
+                e.preventDefault();
+                loadPage(title);
+            };
+            link.style.cursor = 'pointer';
+        } else if (href && href.startsWith('#')) {
+            link.onclick = (e) => {
+                e.preventDefault();
+                const target = document.getElementById(href.substring(1));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            };
+        }
+    });
+}
+function processArticleImages(container) {
+    container.querySelectorAll('img').forEach(img => {
+        img.onclick = () => showImageModal(img.src);
+        img.style.cursor = 'pointer';
+        if (img.src && img.src.startsWith('//')) img.src = 'https:' + img.src;
+    });
+    container.querySelectorAll('.gallery').forEach(gallery => {
+        gallery.classList.add('article-gallery');
+    });
+}
+function showImageModal(imgSrc) {
+    const modal = document.createElement('div');
+    modal.className = 'image-modal';
+    modal.onclick = () => modal.remove();
+    modal.innerHTML = `<img src="${imgSrc}" alt="Полноразмерное изображение">`;
+    document.body.appendChild(modal);
+}
+function loadPage(title) {
+    stopSpeech();
+    currentArticle = title;
+    setTopic(detectTopic(title));
+    addToHistory(title, 'article');
+    progressQuest('article');
+    addXP(15, 5, 0);
+    showSkeleton();
+    fetch(`https://${lang}.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(title)}&format=json&origin=*&prop=text&disableeditsection=true&mobileformat=true`)
+        .then(r => r.json())
+        .then(data => {
+            if (!data.parse || !data.parse.text) throw new Error('no data');
+            const tmp = document.createElement('div');
+            tmp.innerHTML = data.parse.text['*'];
+            const selectorsToRemove = [
+                '.reflist', '.references', '.navbox', '.vertical-navbox',
+                '.mbox-small', '.metadata', '.noprint', '.mw-editsection',
+                '.mw-empty-elt', '.hatnote', '.dablink', '.ambox',
+                '#toc', '.toc', '.infobox .navbox', '.reference',
+                'sup.reference', '.error', '.mw-cite-backlink',
+                '.printfooter', '.catlinks', '.mw-normal-catlinks'
+            ];
+            selectorsToRemove.forEach(selector => {
+                tmp.querySelectorAll(selector).forEach(el => el.remove());
+            });
+            let content = tmp.querySelector('.mw-parser-output');
+            if (!content) content = tmp;
+            processArticleLinks(content);
+            processArticleImages(content);
+            const rKey = `${lang}:${title}`;
+            const r = ratings[rKey] || { likes: 0, dislikes: 0, mine: null };
+            const bmActive = isBookmarked(title);
+            const safeTitle = title.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+            const topic = detectTopic(title);
+            frame(`
+                <div class="article-header">
+                    <div class="topic-badge">${TOPIC_EMOJI[topic]} ${TOPIC_LABEL[topic]}</div>
+                    <div class="article-title">${title}</div>
+                    <div class="article-actions">
+                        <button class="action-btn ${bmActive ? 'bookmarked' : ''}" id="bmBtn" onclick="clickBookmark('${safeTitle}')">
+                            <span class="emoji">🔖</span>
+                            <span class="btn-text">${bmActive ? 'В закладках' : 'Добавить'}</span>
+                        </button>
+                        <button class="action-btn" id="shareBtn" onclick="shareArticle('${safeTitle}')">
+                            <span class="emoji">📤</span>
+                            <span class="btn-text">Поделиться</span>
+                        </button>
+                        <button class="action-btn" id="exportTxtBtn" onclick="exportArticleToTxt()">
+                            <span class="emoji">📁</span>
+                            <span class="btn-text">TXT</span>
+                        </button>
+                        <button class="action-btn" id="speechBtn" onclick="toggleSpeech()">
+                            <span class="emoji">🎤</span>
+                            <span class="btn-text">Озвучить</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="article-content" id="articleContent">${content.innerHTML}</div>
+                <div class="article-footer">
+                    <div class="rating-box">
+                        <div class="rating-label">💬 Оцени статью</div>
+                        <div class="rating-btns">
+                            <button class="rate-btn ${r.mine === 'like' ? 'liked' : ''}" id="likeBtn" onclick="rate('like')">👍 <span id="likeCnt">${r.likes}</span></button>
+                            <button class="rate-btn ${r.mine === 'dislike' ? 'disliked' : ''}" id="dislikeBtn" onclick="rate('dislike')">👎 <span id="dislikeCnt">${r.dislikes}</span></button>
+                        </div>
+                    </div>
+                    <a class="wiki-link" href="https://${lang}.wikipedia.org/wiki/${encodeURIComponent(title)}" target="_blank">📖 Читать на оригинальной Википедии →</a>
+                    <div class="nav-btns">
+                        ${lastQuery ? `<button class="btn btn-ghost" onclick="searchWiki()">← К результатам</button>` : ''}
+                        <button class="btn btn-ghost" onclick="showHistory()">📜 История</button>
+                        <button class="btn btn-ghost" onclick="randomArticle()">🎲 Случайная</button>
+                    </div>
+                </div>
+            `);
+            setTimeout(updateReadingProgress, 100);
+        })
+        .catch(() => frame('<div class="empty-state"><div class="e-icon">❌</div><p>Не удалось загрузить статью.</p></div>'));
+}
+function shareArticle(title) {
+    const url = `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(title)}`;
+    const text = `Посмотри статью "${title}" на Википедии!`;
+    if (navigator.share) {
+        navigator.share({ title: title, text: text, url: url }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(url).then(() => {
+            alert('🔗 Ссылка на статью скопирована в буфер обмена!');
+        }).catch(() => {
+            prompt('Скопируйте ссылку вручную:', url);
+        });
+    }
+}
+function clickBookmark(title) {
+    toggleBookmark(title);
+    const btn = document.getElementById('bmBtn');
+    if (btn) {
+        const isBmActive = isBookmarked(title);
+        btn.innerHTML = `<span class="emoji">🔖</span><span class="btn-text">${isBmActive ? 'В закладках' : 'Добавить'}</span>`;
+        if (isBmActive) btn.classList.add('bookmarked');
+        else btn.classList.remove('bookmarked');
+    }
+}
+function rate(type) {
+    const key = `${lang}:${currentArticle}`;
+    if (!ratings[key]) ratings[key] = { likes: 0, dislikes: 0, mine: null };
+    const r = ratings[key];
+    const field = type === 'like' ? 'likes' : 'dislikes';
+    const oppField = type === 'like' ? 'dislikes' : 'likes';
+    if (r.mine === type) { r[field]--; r.mine = null; }
+    else { if (r.mine) r[oppField]--; r[field]++; r.mine = type; }
+    saveRatings();
+    document.getElementById('likeCnt').textContent = r.likes;
+    document.getElementById('dislikeCnt').textContent = r.dislikes;
+    document.getElementById('likeBtn').className = `rate-btn ${r.mine === 'like' ? 'liked' : ''}`;
+    document.getElementById('dislikeBtn').className = `rate-btn ${r.mine === 'dislike' ? 'disliked' : ''}`;
+    const hi = history.find(i => i.title === currentArticle);
+    if (hi) { hi.rating = r.mine; saveHistory(); }
+    progressQuest('like');
+    addXP(5, 2, 0);
+}
+function getTextForSpeech() {
+    const contentDiv = document.getElementById('articleContent');
+    if (!contentDiv) return '';
+    const clone = contentDiv.cloneNode(true);
+    clone.querySelectorAll('script, style, table, .infobox, .navbox, .gallery').forEach(el => el.remove());
+    return clone.textContent.trim();
+}
+function toggleSpeech() {
+    if (!window.speechSynthesis) {
+        alert('К сожалению, ваш браузер не поддерживает синтез речи.');
+        return;
+    }
+    const speechBtn = document.getElementById('speechBtn');
+    if (isSpeaking) {
+        stopSpeech();
+        if (speechBtn) {
+            speechBtn.innerHTML = '<span class="emoji">🎤</span><span class="btn-text">Озвучить</span>';
+            speechBtn.classList.remove('speaking');
+        }
+        resumeMusicAfterSpeech();
+    } else {
+        const text = getTextForSpeech();
+        if (!text) {
+            alert('Нет текста для озвучивания.');
+            return;
+        }
+        stopMusicForSpeech();
+        startSpeech(text);
+        if (speechBtn) {
+            speechBtn.innerHTML = '<span class="emoji">⏸️</span><span class="btn-text">Пауза</span>';
+            speechBtn.classList.add('speaking');
+        }
+    }
+}
+function startSpeech(text) {
+    if (speechSynthesis.speaking) speechSynthesis.cancel();
+    speechUtterance = new SpeechSynthesisUtterance(text);
+    const langMap = {
+        'ru': 'ru-RU', 'en': 'en-US', 'de': 'de-DE', 'fr': 'fr-FR',
+        'es': 'es-ES', 'it': 'it-IT', 'pt': 'pt-PT', 'nl': 'nl-NL',
+        'pl': 'pl-PL', 'uk': 'uk-UA', 'ja': 'ja-JP', 'zh': 'zh-CN',
+        'ar': 'ar-SA', 'hi': 'hi-IN', 'bn': 'bn-BD', 'ko': 'ko-KR',
+        'tr': 'tr-TR', 'vi': 'vi-VN', 'th': 'th-TH', 'cs': 'cs-CZ',
+        'sv': 'sv-SE', 'fi': 'fi-FI', 'no': 'no-NO', 'da': 'da-DK',
+        'hu': 'hu-HU', 'el': 'el-GR', 'he': 'he-IL', 'ro': 'ro-RO',
+        'sk': 'sk-SK', 'bg': 'bg-BG', 'sr': 'sr-RS', 'hr': 'hr-HR',
+        'lt': 'lt-LT', 'lv': 'lv-LV', 'et': 'et-EE', 'id': 'id-ID',
+        'ms': 'ms-MY'
+    };
+    speechUtterance.lang = langMap[lang] || 'ru-RU';
+    speechUtterance.onstart = () => { isSpeaking = true; };
+    speechUtterance.onend = () => { isSpeaking = false; updateSpeechBtn(); resumeMusicAfterSpeech(); };
+    speechUtterance.onerror = () => { isSpeaking = false; updateSpeechBtn(); resumeMusicAfterSpeech(); };
+    speechSynthesis.speak(speechUtterance);
+}
+function updateSpeechBtn() {
+    const speechBtn = document.getElementById('speechBtn');
+    if (speechBtn) {
+        speechBtn.innerHTML = '<span class="emoji">🎤</span><span class="btn-text">Озвучить</span>';
+        speechBtn.classList.remove('speaking');
+    }
+}
+function stopSpeech() {
+    if (speechSynthesis) speechSynthesis.cancel();
+    isSpeaking = false;
+    updateSpeechBtn();
+}
+function randomArticle() {
+    stopSpeech();
+    setTopic('default');
+    showSkeleton();
+    fetch(`https://${lang}.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json&origin=*`)
+        .then(r => r.json())
+        .then(d => { loadPage(d.query.random[0].title); })
+        .catch(() => frame('<div class="empty-state"><div class="e-icon">⚠️</div><p>Не удалось получить случайную статью</p></div>'));
+}
+function showHistory() {
+    stopSpeech();
+    setTopic('default');
+    const articles = history.filter(i => i.type === 'article');
+    const searches = history.filter(i => i.type === 'search');
+    const liked = history.filter(i => i.rating === 'like').length;
+    const disliked = history.filter(i => i.rating === 'dislike').length;
+    const topicCounts = {};
+    articles.forEach(a => { const t = detectTopic(a.title); topicCounts[t] = (topicCounts[t] || 0) + 1; });
+    const topTopics = Object.entries(topicCounts).sort((a,b) => b[1]-a[1]).slice(0, 5);
+    let html = `
+        <div class="section-header">
+            <div class="section-title">📜 История</div>
+            <button class="btn btn-ghost" onclick="showHome()">← На главную</button>
+        </div>
+        <div class="stats-row">
+            <div class="stat-card"><div class="num">${articles.length}</div><div class="lbl">📄 Статей</div></div>
+            <div class="stat-card"><div class="num">${searches.length}</div><div class="lbl">🔍 Поисков</div></div>
+            <div class="stat-card"><div class="num">${liked}</div><div class="lbl">👍 Лайков</div></div>
+            <div class="stat-card"><div class="num">${disliked}</div><div class="lbl">👎 Дизлайков</div></div>
+        </div>
+        ${topTopics.length ? `<div style="margin-bottom:16px;"><div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;">🏆 Твои любимые темы</div><div class="pills">${topTopics.map(([t,c]) => `<span class="pill">${TOPIC_EMOJI[t]} ${TOPIC_LABEL[t]} ×${c}</span>`).join('')}</div></div>` : ''}
+    `;
+    if (!history.length) {
+        html += `<div class="empty-state"><div class="e-icon">🕊️</div><p>История пока пуста.</p></div>`;
+    } else {
+        html += `<div class="list">`;
+        history.forEach(item => {
+            const safeTitle = item.title.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+            const icon = item.type === 'search' ? '🔍' : '📄';
+            const ratingBadge = item.rating === 'like' ? ' 👍' : item.rating === 'dislike' ? ' 👎' : '';
+            html += `<div class="list-card" onclick="handleHistoryClick('${safeTitle}', '${item.type}')">
+                <div class="icon">${icon}</div>
+                <div class="info">
+                    <div class="c-title">${item.title}${ratingBadge}</div>
+                    <div class="c-sub">${item.date} · ${(item.lang||'ru').toUpperCase()}</div>
+                </div>
+                <span class="arr">→</span>
+            </div>`;
+        });
+        if (history.length > 0) html += `<div style="text-align:center; margin-top:16px;"><button class="btn btn-danger" onclick="clearHistory()">🗑️ Очистить всё</button></div>`;
+        html += `</div>`;
+    }
+    frame(html);
+}
+function handleHistoryClick(title, type) {
+    if (type === 'search') {
+        const q = title.replace('Поиск: ', '');
+        document.getElementById('searchInput').value = q;
+        searchWiki();
+    } else {
+        loadPage(title);
+    }
+}
+function clearHistory() {
+    if (confirm('Точно очистить всю историю?')) { history = []; saveHistory(); showHistory(); }
+}
+function showBookmarks() {
+    stopSpeech();
+    setTopic('default');
+    let html = `<div class="section-header"><div class="section-title">🔖 Закладки</div><button class="btn btn-ghost" onclick="showHome()">← На главную</button></div>`;
+    if (!bookmarks.length) {
+        html += `<div class="empty-state"><div class="e-icon">🔖</div><p>Закладок пока нет.<br>Открой статью и нажми «Добавить».</p></div>`;
+    } else {
+        html += `<div class="list">`;
+        bookmarks.forEach(b => {
+            const safeTitle = b.title.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+            const topic = detectTopic(b.title);
+            html += `<div class="list-card">
+                <div class="icon" onclick="loadPage('${safeTitle}')">${TOPIC_EMOJI[topic]}</div>
+                <div class="info" onclick="loadPage('${safeTitle}')">
+                    <div class="c-title">${b.title}</div>
+                    <div class="c-sub">${b.date} · ${(b.lang||'ru').toUpperCase()}</div>
+                </div>
+                <button class="remove-btn" onclick="removeBookmark('${safeTitle}')">✕ Удалить</button>
+            </div>`;
+        });
+        html += `</div>`;
+    }
+    frame(html);
+}
+function removeBookmark(title) {
+    bookmarks = bookmarks.filter(b => b.title !== title);
+    saveBookmarks();
+    showBookmarks();
+}
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function scrollToBottom() {
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+}
+function handleProgressClick() {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    if (winScroll < 10) scrollToBottom();
+    else scrollToTop();
+}
+function updateReadingProgress() {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const progressEl = document.getElementById('readingProgress');
+    if (height <= 0) {
+        progressEl.innerHTML = '0%';
+        progressEl.classList.remove('arrow');
+        return;
+    }
+    const scrolled = Math.min(100, Math.round((winScroll / height) * 100));
+    if (winScroll < 10) {
+        progressEl.innerHTML = '↓';
+        progressEl.classList.add('arrow');
+    } else if (scrolled >= 100 || (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 5) {
+        progressEl.innerHTML = '↑';
+        progressEl.classList.add('arrow');
+    } else {
+        progressEl.innerHTML = scrolled + '%';
+        progressEl.classList.remove('arrow');
+    }
+}
+window.addEventListener('scroll', updateReadingProgress);
+window.addEventListener('load', updateReadingProgress);
+window.addEventListener('resize', updateReadingProgress);
+setInterval(updateReadingProgress, 100);
+
+// Функции для блокнота
+let notebookContent = localStorage.getItem('notebook') || '';
+
+function showNotebook() {
+    stopSpeech();
+    setTopic('default');
+    
+    const wordCount = notebookContent.trim() ? notebookContent.trim().split(/\s+/).length : 0;
+    const charCount = notebookContent.length;
+    
+    frame(`
+        <div class="section-header">
+            <div class="section-title">✏️ Блокнот</div>
+            <button class="btn btn-ghost" onclick="showHome()">← На главную</button>
+        </div>
+        <div class="notebook-container">
+            <div class="notebook-toolbar">
+                <button class="btn btn-primary" onclick="saveNotebook()">💾 Сохранить</button>
+                <button class="btn btn-ghost" onclick="clearNotebook()">🗑️ Очистить</button>
+                <button class="btn btn-ghost" onclick="copyNotebook()">📋 Копировать</button>
+                <button class="btn btn-ghost" onclick="downloadNotebook()">📥 Скачать</button>
+            </div>
+            <textarea id="notebookTextarea" class="notebook-textarea" placeholder="Введите текст здесь...">${notebookContent}</textarea>
+            <div class="notebook-stats">
+                <span>📊 Слов: ${wordCount}</span>
+                <span>🔤 Символов: ${charCount}</span>
+                <span id="notebookSaveStatus" class="notebook-save-status saved">✓ Сохранено</span>
+            </div>
+        </div>
+    `);
+    
+    // Отслеживаем изменения для отображения статуса сохранения
+    const textarea = document.getElementById('notebookTextarea');
+    let timeout;
+    textarea.addEventListener('input', () => {
+        document.getElementById('notebookSaveStatus').textContent = '⋯ Не сохранено';
+        document.getElementById('notebookSaveStatus').className = 'notebook-save-status not-saved';
+        
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            notebookContent = textarea.value;
+            localStorage.setItem('notebook', notebookContent);
+            document.getElementById('notebookSaveStatus').textContent = '✓ Сохранено';
+            document.getElementById('notebookSaveStatus').className = 'notebook-save-status saved';
+            
+            // Обновляем статистику
+            const newWordCount = notebookContent.trim() ? notebookContent.trim().split(/\s+/).length : 0;
+            const newCharCount = notebookContent.length;
+            document.querySelector('.notebook-stats span:first-child').textContent = `📊 Слов: ${newWordCount}`;
+            document.querySelector('.notebook-stats span:nth-child(2)').textContent = `🔤 Символов: ${newCharCount}`;
+        }, 1000);
+    });
+}
+
+function saveNotebook() {
+    const textarea = document.getElementById('notebookTextarea');
+    if (textarea) {
+        notebookContent = textarea.value;
+        localStorage.setItem('notebook', notebookContent);
+        document.getElementById('notebookSaveStatus').textContent = '✓ Сохранено';
+        document.getElementById('notebookSaveStatus').className = 'notebook-save-status saved';
+        
+        // Обновляем статистику
+        const wordCount = notebookContent.trim() ? notebookContent.trim().split(/\s+/).length : 0;
+        const charCount = notebookContent.length;
+        document.querySelector('.notebook-stats span:first-child').textContent = `📊 Слов: ${wordCount}`;
+        document.querySelector('.notebook-stats span:nth-child(2)').textContent = `🔤 Символов: ${charCount}`;
+    }
+}
+
+function clearNotebook() {
+    if (confirm('Очистить блокнот?')) {
+        notebookContent = '';
+        localStorage.setItem('notebook', notebookContent);
+        const textarea = document.getElementById('notebookTextarea');
+        if (textarea) {
+            textarea.value = '';
+            document.getElementById('notebookSaveStatus').textContent = '✓ Сохранено';
+            document.getElementById('notebookSaveStatus').className = 'notebook-save-status saved';
+            document.querySelector('.notebook-stats span:first-child').textContent = '📊 Слов: 0';
+            document.querySelector('.notebook-stats span:nth-child(2)').textContent = '🔤 Символов: 0';
+        }
+    }
+}
+
+function copyNotebook() {
+    const textarea = document.getElementById('notebookTextarea');
+    if (textarea && textarea.value) {
+        navigator.clipboard.writeText(textarea.value).then(() => {
+            alert('📋 Текст скопирован в буфер обмена!');
+        }).catch(() => {
+            alert('Не удалось скопировать текст');
+        });
+    } else {
+        alert('Нет текста для копирования');
+    }
+}
+
+function downloadNotebook() {
+    if (notebookContent) {
+        const blob = new Blob([notebookContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `wiki-read-notebook-${new Date().toISOString().slice(0,10)}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } else {
+        alert('Нет текста для скачивания');
+    }
+}
+</script>
+</body>
+</html>
